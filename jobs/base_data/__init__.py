@@ -12,7 +12,7 @@ class CreateBase(DesignJob):
         name = "Base Data"
         dryrun_default = True
         design_file = "designs/0001_design.yaml.j2"
-        context_class = BaseContext
+        # context_class = BaseContext
         has_sensitive_variables = False
         description = "Stage 0"
 
