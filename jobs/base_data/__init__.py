@@ -18,4 +18,3 @@ class CreateBase(DesignJob):
 
 name = "David Designs"
 register_jobs(CreateBase)
-
