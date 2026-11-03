@@ -1,0 +1,59 @@
+---
+manufacturers:
+    - "!create_or_update:name": "Palo Alto"
+    - "!create_or_update:name": "Cisco"
+    - "!create_or_update:name": "Opengear"
+    - "!create_or_update:name": "Schneider Electric"
+
+platforms:
+    - "!create_or_update:name": "Palo Alto PAN-OS"
+    - "!create_or_update:name": "Cisco IOS"
+    - "!create_or_update:name": "APC AOS"
+
+device_types:
+  - "!create_or_update:model": "PA-3020"
+    manufacturer__name: "Palo Alto"
+    u_height: 21
+  - "!create_or_update:model": "C9300-48-P-A"
+    manufacturer__name: "Cisco"
+    u_height: 1
+
+roles:
+  - "!create_or_update:name": "Firewall"
+    color: "3f51b5"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "Access Switch"
+    color: "ffeb3b"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "Console Server"
+    color: "8e7cc3"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "PDU"
+    color: "e06666"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+
+location_types:
+  - "!create_or_update:name": "Region"
+    children:
+    - "!create_or_update:name": "Site"
+      children:
+      - "!create_or_update:name": "Building"
+        content_types:
+          - { "!get:model": "device" }
+          - { "!get:model": "prefix" }
+          - { "!get:model": "vlan" }
+      children:
+        - "!create_or_update:name": "Floor"
+        children:
+        - "!create_or_update:name": "Room"
+          content_types:
+            - { "!get:model": "device" }
+            - { "!get:model": "rack" }
