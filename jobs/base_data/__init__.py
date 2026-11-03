@@ -1,7 +1,7 @@
 from nautobot.apps.jobs import register_jobs
 from nautobot_design_builder.design_job import DesignJob
 
-from .context import BaseContext
+# from .context import BaseContext
 
 class CreateBase(DesignJob):
     """Job to create base elements for other designs."""
