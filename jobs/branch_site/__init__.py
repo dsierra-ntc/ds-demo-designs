@@ -31,4 +31,4 @@ class BranchDesign(DesignJob):
 
 
 name = "David Designs"
-register_jobs(EdgeDesign)
+register_jobs(BranchDesign)
