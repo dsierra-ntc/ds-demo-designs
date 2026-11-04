@@ -18,18 +18,34 @@ device_types:
     manufacturer__name: "Palo Alto"
     part_number: "PAN-PA-3220"
     u_height: 1
+    interfacetemplates:
+    - "!create_or_update:name": "MGT"
+      type: "1000base-t"
+      mgmt_only: true
   - "!create_or_update:model": "C9300-48P-A"
     part_number: "C9300-48P-A"
     manufacturer__name: "Cisco"
     u_height: 1
+    interfacetemplates:
+    - "!create_or_update:name": "MGT"
+      type: "1000base-t"
+      mgmt_only: false
   - "!create_or_update:model": "OM1208-8e"
     part_number: "OM1208-8e"
     manufacturer__name: "Opengear"
     u_height: 1
+    interfacetemplates:
+    - "!create_or_update:name": "NET1"
+      type: "1000base-t"
+      mgmt_only: false
   - "!create_or_update:model": "AP9570"
-    part_number: "OM1208-8e"
+    part_number: "AP9570"
     manufacturer__name: "Schneider Electric"
     u_height: 1
+    interfacetemplates:
+    - "!create_or_update:name": "ETH1"
+      type: "1000base-t"
+      mgmt_only: false
 
 roles:
   - "!create_or_update:name": "Firewall"
