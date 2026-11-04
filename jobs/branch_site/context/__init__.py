@@ -1,6 +1,6 @@
 from nautobot_design_builder.context import Context
 
 
-class BranchDesignContextContext(Context):
+class BranchDesignContext(Context):
     """Render context for basic design"""
 
