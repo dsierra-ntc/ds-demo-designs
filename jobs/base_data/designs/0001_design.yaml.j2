@@ -1,34 +1,59 @@
 ---
 manufacturers:
-  - "!create_or_update:name": "Juniper"
+  - "!create_or_update:name": "Palo Alto"
   - "!create_or_update:name": "Cisco"
+  - "!create_or_update:name": "Opengear"
+  - "!create_or_update:name": "Schneider Electric"
 
 platforms:
-  - "!create_or_update:name": "Juniper Junos"
-    "manufacturer__name": "Juniper"
-    "!ref": "junos_platform"
+  - "!create_or_update:name": "PAN-OS"
+    "manufacturer__name": "Palo Alto"
   - "!create_or_update:name": "Cisco IOS"
     "manufacturer__name": "Cisco"
-    "!ref": "cisco_ios_platform"
+  - "!create_or_update:name": "APC AOS"
+    "manufacturer__name": "Schneider Electric"
 
 device_types:
-  - "!create_or_update:model": "PTX10016"
-    manufacturer__name: "Juniper"
-    part_number: "PTX10016-PREM2"
-    u_height: 21
-  - "!create_or_update:model": "C8300-1N1S-6T"
-    part_number: "C8300-1N1S-6T"
+  - "!create_or_update:model": "PA-3220"
+    manufacturer__name: "Palo Alto"
+    part_number: "PAN-PA-3220"
+    u_height: 1
+  - "!create_or_update:model": "C9300-48P-A"
+    part_number: "C9300-48P-A"
     manufacturer__name: "Cisco"
+    u_height: 1
+  - "!create_or_update:model": "OM1208-8e"
+    part_number: "OM1208-8e"
+    manufacturer__name: "Opengear"
+    u_height: 1
+  - "!create_or_update:model": "AP9570"
+    part_number: "OM1208-8e"
+    manufacturer__name: "Schneider Electric"
     u_height: 1
 
 roles:
-  - "!create_or_update:name": "Core Router"
+  - "!create_or_update:name": "Firewall"
     color: "3f51b5"
     content_types:
       - "!get:app_label": "dcim"
         "!get:model": "device"
-  - "!create_or_update:name": "Edge Router"
+  - "!create_or_update:name": "Edge Switch"
     color: "ffeb3b"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "Access Switch"
+    color: "a6c8eb"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "Console Server"
+    color: "6d45c1"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "PDU"
+    color: "bf1fa5"
     content_types:
       - "!get:app_label": "dcim"
         "!get:model": "device"
