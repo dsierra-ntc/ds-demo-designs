@@ -2,6 +2,7 @@
 manufacturers:
   - "!create_or_update:name": "Palo Alto"
   - "!create_or_update:name": "Cisco"
+  - "!create_or_update:name": "Cisco Meraki"
   - "!create_or_update:name": "Opengear"
   - "!create_or_update:name": "Schneider Electric"
 
@@ -26,14 +27,31 @@ device_types:
     part_number: "C9300-48P-A"
     manufacturer__name: "Cisco"
     u_height: 1
+    interface_templates:
+    - "!create_or_update:name": "MGT"
+      type: "1000base-t"
+      mgmt_only: true
   - "!create_or_update:model": "OM1208-8e"
     part_number: "OM1208-8e"
     manufacturer__name: "Opengear"
     u_height: 1
+    interface_templates:
+    - "!create_or_update:name": "net1"
+      type: "1000base-t"
+      mgmt_only: false
   - "!create_or_update:model": "AP9570"
     part_number: "AP9570"
     manufacturer__name: "Schneider Electric"
     u_height: 1
+    - "!create_or_update:name": "eth1"
+      type: "1000base-t"
+      mgmt_only: true
+  - "!create_or_update:model": "MR36"
+    part_number: "AP9570"
+    manufacturer__name: "Cisco Meraki"
+    - "!create_or_update:name": "eth1"
+      type: "1000base-t"
+      mgmt_only: false
 
 roles:
   - "!create_or_update:name": "Firewall"
@@ -119,13 +137,4 @@ location_types:
               status__name: "Active"
               "!ref": "sea1"
 
-providers:
-  - "!create_or_update:name": "NTC"
-
-provider_networks:
-  - "!create_or_update:name": "NTC-WAN"
-    "!create_or_update:provider__name": "NTC"
-
-circuit_types:
-  - "!create_or_update:name": "Ethernet"
 
