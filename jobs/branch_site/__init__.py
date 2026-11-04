@@ -18,6 +18,7 @@ class BranchDesign(DesignJob):
 
     site_name = StringVar(label="Site Name", regex=r"\w{3}\d+")
     site_prefix = IPNetworkVar(label="Site Prefix")
+    aps_per_site = IntegerVar(min_value=1, max_value=6, default=2)
 
     class Meta:
         """Metadata describing this design job."""
