@@ -37,7 +37,6 @@ racks:
   - name: "ap{{ index }}.{{ site_name | lower }}"
     location: "!ref:site"
     device_type__model: {{ model }}
-    role__name: "Access Point"
     status__name: "Planned"
 {% endmacro %}
 
