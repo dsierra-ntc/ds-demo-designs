@@ -1,0 +1,39 @@
+---
+locations:
+  - name: "{{ site_name }}"
+    parent__name: "{{ region.name }}"
+    location_type__name: "Site"
+    status__name: "Planned"
+    "!ref": "site"
+    prefixes:
+      - prefix: "{{ site_prefix }}"
+        status__name: "Active"
+        "!ref": "parent_prefix"
+
+racks:
+  - name: "{{ site_name }}-101"
+    "!ref": "rack1"
+    location: "!ref:site"
+    status__name: "Planned"
+
+  - name: "{{ site_name }}-201"
+    "!ref": "rack2"
+    location: "!ref:site"
+    status__name: "Planned"
+
+{% macro device(device_name, rack_ref, mgmt_address, model, role, platform, rack_pos) -%}
+  - name: "{{ device_name }}.{{ site_name | lower }}"
+    location: "!ref:site"
+    device_type__model: {{ model }}
+    role__name: {{ role }}
+    status__name: "Planned"
+    platform__name: {{ platform }}
+    rack: "!ref:{{ rack_ref }}"
+    position: {{ rack_pos }}
+    face: front
+    serial: "{{ get_serial_number(device_name) }}"
+{% endmacro %}
+
+devices:
+  {{ device("fw01", "rack1", "10.0.0.1", "PA-3220", "Firewall", "PAN-OS", "30") }}
+  {{ device("fw02", "rack1", "10.0.0.2", "PA-3220", "Firewall", "PAN-OS", "29") }}
