@@ -33,6 +33,14 @@ racks:
     face: front
 {% endmacro %}
 
+{% macro access_point(index, model) -%}
+  - name: "ap{{ index }}.{{ site_name | lower }}"
+    location: "!ref:site"
+    device_type__model: {{ model }}
+    role__name: "Access Point"
+    status__name: "Planned"
+{% endmacro %}
+
 devices:
   {{ device("firewall01", "rack1", "10.0.0.1", "PA-3220", "Firewall", "PAN-OS", "30") }}
   {{ device("firewall02", "rack1", "10.0.0.2", "PA-3220", "Firewall", "PAN-OS", "29") }}
@@ -40,3 +48,6 @@ devices:
   {{ device("switch02", "rack1", "10.0.0.4", "PA-3220", "Firewall", "PAN-OS", "27") }}
   {{ device("opengear01", "rack1", "10.0.0.4", "PA-3220", "Firewall", "PAN-OS", "26") }}
   {{ device("pdu01", "rack1", "10.0.0.4", "PA-3220", "Firewall", "PAN-OS", "25") }}
+  {% for index in range(aps_per_site) %}
+  {{ access_point(index, "MR36") }}
+  {% endfor %}
