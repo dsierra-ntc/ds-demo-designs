@@ -3,6 +3,7 @@
 from nautobot.apps.jobs import IntegerVar, IPNetworkVar, ObjectVar, StringVar, register_jobs
 from nautobot.dcim.models import Location
 from nautobot_design_builder.design_job import DesignJob
+from nautobot_design_builder.contrib import ext
 
 from .context import BranchDesignContext
 
@@ -29,6 +30,7 @@ class BranchDesign(DesignJob):
         context_class = BranchDesignContext
         nautobot_version = ">=2"
         description = "Create a new branch site"
+        extensions = [ext.LookupExtension]
 
-name = "David Designs"
+name = "David Test Designs"
 register_jobs(BranchDesign)

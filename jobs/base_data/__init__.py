@@ -16,5 +16,5 @@ class CreateBase(DesignJob):
         has_sensitive_variables = False
         description = "Create base elements for other designs"
 
-name = "David Designs"
+name = "David Test Designs"
 register_jobs(CreateBase)
