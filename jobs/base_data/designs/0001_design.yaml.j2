@@ -81,6 +81,11 @@ roles:
     content_types:
       - "!get:app_label": "dcim"
         "!get:model": "device"
+  - "!create_or_update:name": "Wireless Access Point"
+    color: "c6b63b"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
 
 location_types:
   - "!create_or_update:name": "Region"
