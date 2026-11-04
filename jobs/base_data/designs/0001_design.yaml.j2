@@ -24,6 +24,12 @@ device_types:
     - "!create_or_update:name": "MGT"
       type: "1000base-t"
       mgmt_only: true
+    - "!create_or_update:name": "Port1"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "Port2"
+      type: "1000base-t"
+      mgmt_only: false
   - "!create_or_update:model": "C9300-48P-A"
     part_number: "C9300-48P-A"
     manufacturer__name: "Cisco"
@@ -32,12 +38,33 @@ device_types:
     - "!create_or_update:name": "MGT"
       type: "1000base-t"
       mgmt_only: true
+    - "!create_or_update:name": "Eth1/1"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "Eth1/2"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "Eth1/3"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "Eth1/4"
+      type: "1000base-t"
+      mgmt_only: false
   - "!create_or_update:model": "OM1208-8e"
     part_number: "OM1208-8e"
     manufacturer__name: "Opengear"
     u_height: 1
     interface_templates:
     - "!create_or_update:name": "net1"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "net2"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "sw0p0"
+      type: "1000base-t"
+      mgmt_only: false
+    - "!create_or_update:name": "sw0p1"
       type: "1000base-t"
       mgmt_only: false
   - "!create_or_update:model": "AP9570"
@@ -47,7 +74,7 @@ device_types:
     interface_templates:
     - "!create_or_update:name": "eth1"
       type: "1000base-t"
-      mgmt_only: true
+      mgmt_only: false
   - "!create_or_update:model": "MR36"
     part_number: "MR36"
     manufacturer__name: "Cisco Meraki"
