@@ -62,3 +62,48 @@ cables:
       device__name: "switch01.mia2"
       name: "Eth1/1"
     status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "opengear01.mia2"
+      name: "sw0p0"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "switch01.mia2"
+      name: "Eth1/2"
+    status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "pdu01.mia2"
+      name: "sw0p0"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "switch01.mia2"
+      name: "Eth1/3"
+    status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "firewall02.mia2"
+      name: "Port1"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "switch02.mia2"
+      name: "Eth1/1"
+    status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "ap0.mia2"
+      name: "sw0p0"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "switch02.mia2"
+      name: "Eth1/2"
+    status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "ap1.mia2"
+      name: "sw0p0"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "switch02.mia2"
+      name: "Eth1/4"
+    status__name: "Planned"
