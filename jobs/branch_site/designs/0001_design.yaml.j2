@@ -51,3 +51,14 @@ devices:
   {% for index in range(aps_per_site) %}
   {{ access_point(index, "MR36") }}
   {% endfor %}
+
+cables:
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "firewall01.mia2"
+      name: "Port1"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "switch01.mia2"
+      name: "Eth1/1"
+    status__name: "Planned"
