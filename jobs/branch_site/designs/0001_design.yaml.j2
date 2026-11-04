@@ -44,10 +44,10 @@ racks:
 devices:
   {{ device("firewall01", "rack1", "10.0.0.1", "PA-3220", "Firewall", "PAN-OS", "30") }}
   {{ device("firewall02", "rack1", "10.0.0.2", "PA-3220", "Firewall", "PAN-OS", "29") }}
-  {{ device("switch01", "rack1", "10.0.0.3", "PA-3220", "Firewall", "PAN-OS", "28") }}
-  {{ device("switch02", "rack1", "10.0.0.4", "PA-3220", "Firewall", "PAN-OS", "27") }}
-  {{ device("opengear01", "rack1", "10.0.0.4", "PA-3220", "Firewall", "PAN-OS", "26") }}
-  {{ device("pdu01", "rack1", "10.0.0.4", "PA-3220", "Firewall", "PAN-OS", "25") }}
+  {{ device("switch01", "rack1", "10.0.0.3", "C9300-48P-A", "Access Switch", "Cisco IOS", "28") }}
+  {{ device("switch02", "rack1", "10.0.0.4", "C9300-48P-A", "Access Switch", "Cisco IOS", "27") }}
+  {{ device("opengear01", "rack1", "10.0.0.5", "OM1208-8e", "Console Server", "Linux", "26") }}
+  {{ device("pdu01", "rack1", "10.0.0.6", "AP9570", "PDU", "Linux", "25") }}
   {% for index in range(aps_per_site) %}
   {{ access_point(index, "MR36") }}
   {% endfor %}
