@@ -14,7 +14,7 @@ class CreateBase(DesignJob):
         design_file = "designs/0001_design.yaml.j2"
         context_class = BaseContext
         has_sensitive_variables = False
-        description = "Stage 0"
+        description = "Create base elements for other designs"
 
 name = "David Designs"
 register_jobs(CreateBase)

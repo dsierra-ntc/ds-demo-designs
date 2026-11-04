@@ -28,7 +28,7 @@ class BranchDesign(DesignJob):
         design_file = "designs/0001_design.yaml.j2"
         context_class = BranchDesignContext
         nautobot_version = ">=2"
-
+        description = "Create a new branch site"
 
 name = "David Designs"
 register_jobs(BranchDesign)
