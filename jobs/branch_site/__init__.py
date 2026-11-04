@@ -1,11 +1,10 @@
 """Basic design demonstrates the capabilities of the Design Builder."""
 
-from nautobot.apps.jobs import IPNetworkVar, ObjectVar, StringVar, register_jobs
+from nautobot.apps.jobs import IntegerVar, IPNetworkVar, ObjectVar, StringVar, register_jobs
 from nautobot.dcim.models import Location
 from nautobot_design_builder.design_job import DesignJob
 
 from .context import BranchDesignContext
-
 
 class BranchDesign(DesignJob):
     """Create a branch site."""
