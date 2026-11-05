@@ -56,6 +56,20 @@ devices:
     position: {{ d.position }}
     face: front
     {% endif %}
+    "!ref": "{{ d.name }}"
+    {% if d.vc is defined %}
+    virtual_chassis:
+      {% if d.vc.master | default(false) %}
+      "!create_or_update:name": "{{ site_name | lower }}-{{ d.vc.name }}"
+      domain: "{{ site_name | upper }} VC"
+      master: "!ref:{{ d.name }}"
+      deferred: true
+      {% else %}
+      "!get:name": "{{ site_name | lower }}-{{ d.vc.name }}"
+      {% endif %}
+    vc_position: {{ d.vc.position }}
+    vc_priority: {{ d.vc.priority }}
+    {% endif %}
     interfaces:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:

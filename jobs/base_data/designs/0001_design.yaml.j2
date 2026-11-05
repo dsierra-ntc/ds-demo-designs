@@ -172,4 +172,12 @@ location_types:
               status__name: "Active"
               "!ref": "sea1"
 
+providers:
+  - "!create_or_update:name": "Zayo"
 
+provider_networks:
+  - "!create_or_update:name": "Zayo-Internet-Transit"
+    "!create_or_update:provider__name": "Zayo"
+
+circuit_types:
+  - "!create_or_update:name": "Internet"
