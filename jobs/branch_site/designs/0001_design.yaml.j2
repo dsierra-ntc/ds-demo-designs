@@ -21,89 +21,50 @@ racks:
     location: "!ref:site"
     status__name: "Planned"
 
-{% macro device(device_name, rack_ref, mgmt_address, model, role, platform, rack_pos) -%}
-  - name: "{{ device_name }}.{{ site_name | lower }}"
-    location: "!ref:site"
-    device_type__model: {{ model }}
-    role__name: {{ role }}
-    status__name: "Planned"
-    platform__name: {{ platform }}
-    rack: "!ref:{{ rack_ref }}"
-    position: {{ rack_pos }}
-    face: front
-{% endmacro %}
-
-{% macro access_point(index, model) -%}
-  - name: "ap{{ index }}.{{ site_name | lower }}"
-    location: "!ref:site"
-    device_type__model: {{ model }}
-    role__name: "Wireless Access Point"
-    status__name: "Planned"
-{% endmacro %}
+{% macro dev_name(base) %}{{ base }}.{{ site_name | lower }}{% endmacro %}
 
 devices:
-  {{ device("firewall01", "rack1", "10.0.0.1", "PA-3220", "Firewall", "PAN-OS", "30") }}
-  {{ device("firewall02", "rack1", "10.0.0.2", "PA-3220", "Firewall", "PAN-OS", "29") }}
-  {{ device("switch01", "rack1", "10.0.0.3", "C9300-48P-A", "Access Switch", "Cisco IOS", "28") }}
-  {{ device("switch02", "rack1", "10.0.0.4", "C9300-48P-A", "Access Switch", "Cisco IOS", "27") }}
-  {{ device("opengear01", "rack1", "10.0.0.5", "OM1208-8e", "Console Server", "Linux", "26") }}
-  {{ device("pdu01", "rack1", "10.0.0.6", "AP9570", "PDU", "Linux", "25") }}
-  {% for index in range(aps_per_site) %}
-  {{ access_point(index, "MR36") }}
-  {% endfor %}
+{% for d in devices %}
+  - name: "{{ dev_name(d.name) }}"
+    location: "!ref:site"
+    device_type__model: "{{ d.model }}"
+    role__name: "{{ d.role }}"
+    platform__name: "{{ d.platform }}"
+    status__name: "Planned"
+    {% if d.rack is defined %}
+    rack: "!ref:{{ d.rack }}"
+    position: {{ d.position }}
+    face: front
+    {% endif %}
+{% endfor %}
+{% for i in range(aps_per_site) %}
+  - name: "{{ dev_name('ap' ~ i) }}"
+    location: "!ref:site"
+    device_type__model: "{{ access_point.model }}"
+    role__name: "{{ access_point.role }}"
+    status__name: "Planned"
+{% endfor %}
 
 cables:
+{% for c in cables %}
   - "!lookup:termination_a":
       content-type: "dcim.interface"
-      device__name: "firewall01.mia2"
-      name: "Port1"
+      device__name: "{{ dev_name(c.a.device) }}"
+      name: "{{ c.a.port }}"
     "!lookup:termination_b":
       content-type: "dcim.interface"
-      device__name: "switch01.mia2"
-      name: "Eth1/1"
+      device__name: "{{ dev_name(c.b.device) }}"
+      name: "{{ c.b.port }}"
     status__name: "Planned"
+{% endfor %}
+{% for i in range(aps_per_site) %}
   - "!lookup:termination_a":
       content-type: "dcim.interface"
-      device__name: "opengear01.mia2"
-      name: "sw0p0"
-    "!lookup:termination_b":
-      content-type: "dcim.interface"
-      device__name: "switch01.mia2"
-      name: "Eth1/2"
-    status__name: "Planned"
-  - "!lookup:termination_a":
-      content-type: "dcim.interface"
-      device__name: "pdu01.mia2"
+      device__name: "{{ dev_name('ap' ~ i) }}"
       name: "eth1"
     "!lookup:termination_b":
       content-type: "dcim.interface"
-      device__name: "switch01.mia2"
-      name: "Eth1/3"
+      device__name: "{{ dev_name(access_point.switch) }}"
+      name: "Eth1/{{ access_point.first_port + i }}"
     status__name: "Planned"
-  - "!lookup:termination_a":
-      content-type: "dcim.interface"
-      device__name: "firewall02.mia2"
-      name: "Port1"
-    "!lookup:termination_b":
-      content-type: "dcim.interface"
-      device__name: "switch02.mia2"
-      name: "Eth1/1"
-    status__name: "Planned"
-  - "!lookup:termination_a":
-      content-type: "dcim.interface"
-      device__name: "ap0.mia2"
-      name: "eth1"
-    "!lookup:termination_b":
-      content-type: "dcim.interface"
-      device__name: "switch02.mia2"
-      name: "Eth1/2"
-    status__name: "Planned"
-  - "!lookup:termination_a":
-      content-type: "dcim.interface"
-      device__name: "ap1.mia2"
-      name: "eth1"
-    "!lookup:termination_b":
-      content-type: "dcim.interface"
-      device__name: "switch02.mia2"
-      name: "Eth1/4"
-    status__name: "Planned"
+{% endfor %}

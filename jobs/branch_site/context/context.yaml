@@ -1,2 +1,20 @@
 ---
+devices:
+  - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 30}
+  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 29}
+  - {name: switch01,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 28}
+  - {name: switch02,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 27}
+  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 26}
+  - {name: pdu01,       model: AP9570,      role: PDU,            platform: Linux,     rack: rack1, position: 25}
 
+access_point:
+  model: MR36
+  role: Wireless Access Point
+  switch: switch02
+  first_port: 2
+
+cables:
+  - {a: {device: firewall01, port: Port1}, b: {device: switch01, port: Eth1/1}}
+  - {a: {device: opengear01, port: sw0p0}, b: {device: switch01, port: Eth1/2}}
+  - {a: {device: pdu01,      port: eth1},  b: {device: switch01, port: Eth1/3}}
+  - {a: {device: firewall02, port: Port1}, b: {device: switch02, port: Eth1/1}}
