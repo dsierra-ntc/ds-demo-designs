@@ -1,17 +1,19 @@
 ---
 devices:
-  - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 30}
-  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 29}
-  - {name: switch01,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 28}
-  - {name: switch02,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 27}
-  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 26}
-  - {name: pdu01,       model: AP9570,      role: PDU,            platform: Linux,     rack: rack1, position: 25}
+  - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 30, host: 101, mgmt_interface: MGT}
+  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 29, host: 102, mgmt_interface: MGT}
+  - {name: switch01,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 28, host: 103, mgmt_interface: MGT}
+  - {name: switch02,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 27, host: 104, mgmt_interface: MGT}
+  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 26, host: 105, mgmt_interface: net1}
+  - {name: pdu01,       model: AP9570,      role: PDU,            platform: Linux,     rack: rack1, position: 25, host: 106, mgmt_interface: eth1}
 
 access_point:
   model: MR36
   role: Wireless Access Point
   switch: switch02
   first_port: 2
+  mgmt_interface: eth1
+  first_host: 107   # ap0 gets .107, ap1 .108, ...
 
 cables:
   - {a: {device: firewall01, port: Port1}, b: {device: switch01, port: Eth1/1}}
@@ -23,3 +25,8 @@ vlans:
   - {vid: 10, name: management, description: "Management",  offset: "0.0.0.0/24"}
   - {vid: 20, name: users,      description: "User access", offset: "0.0.1.0/24"}
   - {vid: 30, name: voice,      description: "Voice",       offset: "0.0.2.0/24"}
+
+# Devices get a primary IP from the named VLAN's prefix, using their `host` value as the last octet.
+# Assumes the VLAN offset ends in .0 (e.g. 0.0.0.0/24).
+management:
+  vlan: management
