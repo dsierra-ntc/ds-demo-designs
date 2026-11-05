@@ -30,7 +30,7 @@ class BranchDesign(DesignJob):
         context_class = BranchDesignContext
         nautobot_version = ">=2"
         description = "Create a new branch site"
-        extensions = [ext.LookupExtension]
+        extensions = [ext.LookupExtension, ext.ChildPrefixExtension]
 
 name = "David Test Designs"
 register_jobs(BranchDesign)

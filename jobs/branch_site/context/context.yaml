@@ -18,3 +18,8 @@ cables:
   - {a: {device: opengear01, port: sw0p0}, b: {device: switch01, port: Eth1/2}}
   - {a: {device: pdu01,      port: eth1},  b: {device: switch01, port: Eth1/3}}
   - {a: {device: firewall02, port: Port1}, b: {device: switch02, port: Eth1/1}}
+
+vlans:
+  - {vid: 10, name: management, description: "Management",  offset: "0.0.0.0/24"}
+  - {vid: 20, name: users,      description: "User access", offset: "0.0.1.0/24"}
+  - {vid: 30, name: voice,      description: "Voice",       offset: "0.0.2.0/24"}

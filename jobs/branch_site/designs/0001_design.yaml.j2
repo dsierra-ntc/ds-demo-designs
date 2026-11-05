@@ -9,6 +9,14 @@ locations:
       - prefix: "{{ site_prefix }}"
         status__name: "Active"
         "!ref": "parent_prefix"
+    {% for v in vlans %}
+      - "!child_prefix":
+          parent: "!ref:parent_prefix"
+          offset: "{{ v.offset }}"
+        status__name: "Active"
+        location: "!ref:site"
+        vlan: "!ref:vlan_{{ v.vid }}"
+    {% endfor %}
 
 racks:
   - name: "{{ site_name }}-101"
@@ -20,6 +28,17 @@ racks:
     "!ref": "rack2"
     location: "!ref:site"
     status__name: "Planned"
+
+vlans:
+{% for v in vlans %}
+  - "!create_or_update:vid": {{ v.vid }}
+    "!create_or_update:name": "{{ site_name }}-{{ v.name }}"
+    description: "{{ v.description }}"
+    status__name: "Active"
+    locations:
+      - "!get:name": "{{ site_name }}"
+    "!ref": "vlan_{{ v.vid }}"
+{% endfor %}
 
 {% macro dev_name(base) %}{{ base }}.{{ site_name | lower }}{% endmacro %}
 
