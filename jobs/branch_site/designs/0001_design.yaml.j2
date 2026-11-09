@@ -1,9 +1,13 @@
 ---
+{% set site_name = site.name %}
+{% set site_prefix_cidr = site_prefix.prefix %}
+
+prefixes:
+  - "!get:id": "{{ site_prefix.id }}
+    "!ref": "parent_prefix"
+
 locations:
-  - name: "{{ site_name }}"
-    parent__name: "{{ region.name }}"
-    location_type__name: "Site"
-    status__name: "Planned"
+  - "!create_or_update:id": "{{ site.id }}"
     "!ref": "site"
     vlans:
     {% for v in vlans %}
@@ -14,9 +18,6 @@ locations:
         "!ref": "vlan_{{ v.vid }}"
     {% endfor %}
     prefixes:
-      - prefix: "{{ site_prefix }}"
-        status__name: "Active"
-        "!ref": "parent_prefix"
     {% for v in vlans %}
       - "!child_prefix":
           parent: "!ref:parent_prefix"
