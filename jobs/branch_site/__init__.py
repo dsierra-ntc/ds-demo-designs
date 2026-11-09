@@ -1,6 +1,6 @@
 """Basic design demonstrates the capabilities of the Design Builder."""
 
-from nautobot.apps.jobs import IntegerVar, ObjectVar, StringVar, register_jobs
+from nautobot.apps.jobs import IntegerVar, ObjectVar, ChoiceVar, StringVar, register_jobs
 from nautobot.dcim.models import Location
 from nautobot.ipam.models import Prefix
 from nautobot_design_builder.design_job import DesignJob
