@@ -8,3 +8,4 @@ class BranchDesignContext(Context):
     """Render context for branch design"""
 
     aps_per_site: int
+    office_type: str

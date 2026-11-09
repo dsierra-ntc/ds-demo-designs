@@ -1,6 +1,6 @@
 """Basic design demonstrates the capabilities of the Design Builder."""
 
-from nautobot.apps.jobs import IntegerVar, IPNetworkVar, ObjectVar, StringVar, register_jobs
+from nautobot.apps.jobs import IntegerVar, ObjectVar, StringVar, register_jobs
 from nautobot.dcim.models import Location
 from nautobot.ipam.models import Prefix
 from nautobot_design_builder.design_job import DesignJob
@@ -21,6 +21,17 @@ class BranchDesign(DesignJob):
         label="Site Prefix",
         model=Prefix,
         query_params={"location": "$site"},
+    )
+
+    office_type = ChoiceVar(
+        label="Office Type",
+        description="Size profile for the site",
+        chcoies=(
+            ("normal", "Normal"),
+            ("medium", "Medium"),
+            ("large", "Large"),
+        ),
+        default="normal"
     )
 
     aps_per_site = IntegerVar(min_value=1, max_value=6, default=2)
