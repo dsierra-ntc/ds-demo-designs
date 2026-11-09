@@ -26,7 +26,7 @@ class BranchDesign(DesignJob):
     office_type = ChoiceVar(
         label="Office Type",
         description="Size profile for the site",
-        chcoies=(
+        choices=(
             ("normal", "Normal"),
             ("medium", "Medium"),
             ("large", "Large"),
