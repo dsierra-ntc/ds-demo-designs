@@ -1,9 +1,9 @@
 ---
 {% set site_name = site.name %}
-{% set site_prefix_cidr = site_prefix.prefix %}
+{% set site_prefix_cidr = site_prefix.prefix | string %}
 
 prefixes:
-  - "!get:id": "{{ site_prefix.id }}
+  - "!get:id": "{{ site_prefix.id }}"
     "!ref": "parent_prefix"
 
 locations:
@@ -41,7 +41,7 @@ racks:
 {% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
 {% set mgmt_base = mgmt_vlan.offset.split('/')[0].rsplit('.', 1)[0] %}
 {% set mgmt_mask = mgmt_vlan.offset.split('/')[1] %}
-{% macro mgmt_ip(host) %}{{ site_prefix | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
+{% macro mgmt_ip(host) %}{{ site_prefix_cidr | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
 {% macro dev_name(base) %}{{ base }}.{{ site_name | lower }}{% endmacro %}
 
 devices:
