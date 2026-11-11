@@ -2,11 +2,11 @@
 # NOTE: a virtual chassis master (vc.master: true) must be listed before the other members.
 devices:
   - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 30, host: 101, mgmt_interface: management}
-  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 29, host: 102, mgmt_interface: management}
-  - {name: switch01,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 28, host: 103, mgmt_interface: management, vc: {name: stack, position: 1, priority: 2, master: true}}
-  - {name: switch02,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 27, host: 104, mgmt_interface: management, vc: {name: stack, position: 2, priority: 1}}
-  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 26, host: 105, mgmt_interface: net1}
-  - {name: pdu01,       model: AP9570,      role: PDU,            platform: Linux,     rack: rack1, position: 25, host: 106, mgmt_interface: eth1}
+  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 28, host: 102, mgmt_interface: management}
+  - {name: switch01,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 27, host: 103, mgmt_interface: management, vc: {name: stack, position: 1, priority: 2, master: true}}
+  - {name: switch02,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 26, host: 104, mgmt_interface: management, vc: {name: stack, position: 2, priority: 1}}
+  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 25, host: 105, mgmt_interface: net1}
+  - {name: pdu01,       model: AP9570,      role: PDU,            platform: Linux,     rack: rack1, position: 24, host: 106, mgmt_interface: eth1}
 
 access_point:
   model: MR36
