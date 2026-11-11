@@ -34,6 +34,16 @@ class BranchDesign(DesignJob):
         default="normal"
     )
 
+    switch_stack_size = ChoiceVar(
+        label="Switch Stack Size",
+        description="Number of access switches in the virtual chassis",
+        choices=(
+            ("2", "2 switches"),
+            ("4", "4 switches"),
+        ),
+        default="2",
+    )
+
     aps_per_site = IntegerVar(min_value=1, max_value=6, default=2)
 
     class Meta:

@@ -9,3 +9,4 @@ class BranchDesignContext(Context):
 
     aps_per_site: int
     office_type: str
+    switch_stack_size: str

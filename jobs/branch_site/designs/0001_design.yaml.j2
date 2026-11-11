@@ -45,7 +45,7 @@ racks:
 {% macro dev_name(base) %}{{ base }}.{{ site_name | lower }}{% endmacro %}
 
 devices:
-{% for d in devices %}
+{% for d in devices if d.min_stack is not defined or d.min_stack <= (switch_stack_size | int) %}
   - name: "{{ dev_name(d.name) }}"
     location: "!ref:site"
     device_type__model: "{{ d.model }}"
