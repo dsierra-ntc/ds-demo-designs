@@ -9,11 +9,15 @@ manufacturers:
 platforms:
   - "!create_or_update:name": "PAN-OS"
     "manufacturer__name": "Palo Alto"
+    "network_driver": "paloalto_panos"
   - "!create_or_update:name": "Cisco IOS"
     "manufacturer__name": "Cisco"
+    "network_driver": "cisco_ios"
   - "!create_or_update:name": "APC AOS"
     "manufacturer__name": "Schneider Electric"
+    "network_driver": "linux"
   - "!create_or_update:name": "Linux"
+    "network_driver": "linux"
 
 device_types:
   - "!create_or_update:model": "PA-3220"
@@ -225,3 +229,21 @@ location_types:
               status__name: "Active"
               "!ref": "sea1"
 
+#switch_stack:
+#  model: C9300-48P-A
+#  role: Access Switch
+#  platform: Cisco IOS
+#  rack: rack1
+#  mgmt_interface: MGT
+#  vc_name: stack
+#  members:   # master first; the first switch_stack_size members are created
+#    - {name: switch01, position: 27, host: 103, vc_position: 1, vc_priority: 4, master: true}
+#    - {name: switch02, position: 26, host: 104, vc_position: 2, vc_priority: 3}
+#    - {name: switch03, position: 25, host: 105, vc_position: 3, vc_priority: 2}
+#    - {name: switch04, position: 24, host: 106, vc_position: 4, vc_priority: 1}
+#
+#{% for m in switch_stack.members[:(switch_stack_size | int)] %}
+#  - name: "{{ dev_name(m.name) }}"
+#    device_type__model: "{{ switch_stack.model }}"
+#    ...
+#{% endfor %}
