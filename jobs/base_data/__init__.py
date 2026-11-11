@@ -11,6 +11,7 @@ class CreateBase(DesignJob):
         name = "Base Data"
         dryrun_default = True
         design_file = "designs/0001_design.yaml.j2"
+        context_class = None
         has_sensitive_variables = False
         description = "Create base elements for other designs"
 
