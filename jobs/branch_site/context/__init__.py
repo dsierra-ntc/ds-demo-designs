@@ -7,9 +7,9 @@ from nautobot_design_builder.context import Context, context_file
 
 @context_file("context.yaml")
 class BranchDesignContext(Context):
-    """Render context for branch design"""
+    """Render context for branch design."""
 
-    aps_per_site: int
+    ap_count: int
     office_type: str
 
     def get_child_prefix_cidr(self, parent_cidr: str, offset: str) -> str:

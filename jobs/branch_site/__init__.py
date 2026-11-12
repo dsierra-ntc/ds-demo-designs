@@ -8,37 +8,52 @@ from nautobot_design_builder.design_job import DesignJob
 
 from .context import BranchDesignContext
 
-class BranchDesign(DesignJob):
-    """Create a branch site."""
 
-    site = ObjectVar(
-        label="Site",
+class BranchDesign(DesignJob):
+    """Create a branch office."""
+
+    office = ObjectVar(
+        label="Office",
         model=Location,
-        query_params={"location_type": "Site"},
+        query_params={"location_type": "Office"},
     )
 
-    site_prefix = ObjectVar(
-        label="Site Prefix",
+    office_prefix = ObjectVar(
+        label="Branch office Prefix",
         model=Prefix,
-        query_params={"location": "$site"},
+        query_params={"location": "$office"},
+    )
+
+    expand_user_prefix = ChoiceVar(
+        label="Expand uder prefix",
+        description="Standard or extended user prefix block",
+        choices=(
+            ("no", "No (Standard)"),
+            ("yes", "Yes (Extended)"),
+        ),
+        default="no",
     )
 
     office_type = ChoiceVar(
-        label="Office Type",
+        label="Office type",
         description="Office variant and configuration",
         choices=(
             ("normal", "Normal"),
             ("ebc", "EBC"),
         ),
-        default="normal"
+        default="normal",
     )
 
-    aps_per_site = IntegerVar(
-        label="Access Points per Site",
+    ap_count = IntegerVar(
+        label="Wireless access point count",
         description="Number of wireless access points to deploy",
         min_value=1,
-        max_value=4,
-        default=2
+        max_value=10,
+        default=2,
+    )
+
+    pdu_count = IntegerVar(
+        label="PDU count", description="Number of PDU to deploy", min_value=1, max_value=4, default=2
     )
 
     class Meta:
@@ -52,6 +67,7 @@ class BranchDesign(DesignJob):
         nautobot_version = ">=3.2"
         description = "Create a new branch site"
         extensions = [ext.LookupExtension, ext.ChildPrefixExtension]
+
 
 name = "Branch Office Design"
 register_jobs(BranchDesign)

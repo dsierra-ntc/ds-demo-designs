@@ -1,6 +1,6 @@
 ---
-{% set site_name = site.name %}
-{% set site_prefix_cidr = site_prefix.prefix | string %}
+{% set office_name = office.name %}
+{% set office_prefix_cidr = office_prefix.prefix | string %}
 {% set vlans = vlan_sets[office_type] %}
 
 prefixes:
@@ -8,19 +8,19 @@ prefixes:
     "!ref": "parent_prefix"
 
 locations:
-  - "!create_or_update:id": "{{ site.id }}"
-    "!ref": "site"
+  - "!create_or_update:id": "{{ office.id }}"
+    "!ref": "office"
     vlans:
     {% for v in vlans %}
       - "!create_or_update:vid": {{ v.vid }}
-        "!create_or_update:name": "{{ site_name }}-{{ v.name }}"
+        "!create_or_update:name": "{{ office_name }}-{{ v.name }}"
         description: "{{ v.description }}"
         status__name: "Active"
         "!ref": "vlan_{{ v.vid }}"
     {% endfor %}
     prefixes:
     {% for v in vlans %}
-      - "!create_or_update:prefix": "{{ get_child_prefix_cidr(site_prefix_cidr, v.offset) }}"
+      - "!create_or_update:prefix": "{{ get_child_prefix_cidr(office_prefix_cidr, v.offset) }}"
         status__name: "Active"
         locations: ["!ref:site"]
         vlan: "!ref:vlan_{{ v.vid }}"
@@ -28,7 +28,7 @@ locations:
     {% endfor %}
 
 racks:
-  - "!create_or_update:name": "{{ site_name }}-101"
+  - "!create_or_update:name": "{{ office_name }}-101"
     "!ref": "rack1"
     location: "!ref:site"
     status__name: "Planned"
@@ -36,8 +36,8 @@ racks:
 {% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
 {% set mgmt_base = mgmt_vlan.offset.split('/')[0].rsplit('.', 1)[0] %}
 {% set mgmt_mask = mgmt_vlan.offset.split('/')[1] %}
-{% macro mgmt_ip(host) %}{{ site_prefix_cidr | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
-{% macro dev_name(base) %}{{ base }}.{{ site_name | lower }}{% endmacro %}
+{% macro mgmt_ip(host) %}{{ office_prefix_cidr | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
+{% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 devices:
 {% for d in devices %}
@@ -56,12 +56,12 @@ devices:
     {% if d.vc is defined %}
     virtual_chassis:
       {% if d.vc.master | default(false) %}
-      "!create_or_update:name": "{{ site_name | lower }}-{{ d.vc.name }}"
-      domain: "{{ site_name | upper }} VC"
+      "!create_or_update:name": "{{ office_name | lower }}-{{ d.vc.name }}"
+      domain: "{{ office_name | upper }} VC"
       master: "!ref:{{ d.name }}"
       deferred: true
       {% else %}
-      "!get:name": "{{ site_name | lower }}-{{ d.vc.name }}"
+      "!get:name": "{{ office_name | lower }}-{{ d.vc.name }}"
       {% endif %}
     vc_position: {{ d.vc.position }}
     vc_priority: {{ d.vc.priority }}
@@ -74,7 +74,7 @@ devices:
               status__name: "Active"
     primary_ip4: { "!get:address": "{{ mgmt_ip(d.host) }}", deferred: true }
 {% endfor %}
-{% for i in range(aps_per_site) %}
+{% for i in range(ap_count) %}
   - "!create_or_update:name": "{{ dev_name('ap' ~ i) }}"
     location: "!ref:site"
     device_type__model: "{{ access_point.model }}"
@@ -101,7 +101,7 @@ cables:
       name: "{{ c.b.port }}"
     status__name: "Planned"
 {% endfor %}
-{% for i in range(aps_per_site) %}
+{% for i in range(ap_count) %}
   - "!lookup:termination_a":
       content-type: "dcim.interface"
       device__name: "{{ dev_name('ap' ~ i) }}"
