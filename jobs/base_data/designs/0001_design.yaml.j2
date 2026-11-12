@@ -1,4 +1,5 @@
 ---
+---
 manufacturers:
   - "!create_or_update:name": "Palo Alto"
   - "!create_or_update:name": "Cisco"
@@ -9,15 +10,15 @@ manufacturers:
 platforms:
   - "!create_or_update:name": "PAN-OS"
     "manufacturer__name": "Palo Alto"
-    "network_driver": "paloalto_panos"
+    network_driver: "paloaltonetworks_panos"
   - "!create_or_update:name": "Cisco IOS"
     "manufacturer__name": "Cisco"
-    "network_driver": "cisco_ios"
+    network_driver: "cisco_ios"
   - "!create_or_update:name": "APC AOS"
     "manufacturer__name": "Schneider Electric"
-    "network_driver": "linux"
+    network_driver: "linux"
   - "!create_or_update:name": "Linux"
-    "network_driver": "linux"
+    network_driver: "linux"
 
 device_types:
   - "!create_or_update:model": "PA-3220"
@@ -147,11 +148,6 @@ roles:
       - "!get:app_label": "dcim"
         "!get:model": "device"
   - "!create_or_update:name": "office-switch"
-    color: "ffeb3b"
-    content_types:
-      - "!get:app_label": "dcim"
-        "!get:model": "device"
-  - "!create_or_update:name": "access-switch"
     color: "a6c8eb"
     content_types:
       - "!get:app_label": "dcim"
@@ -174,26 +170,27 @@ roles:
 
 location_types:
   - "!create_or_update:name": "Region"
+    nestable: true
     children:
       - "!create_or_update:name": "City"
         children:
-        - "!create_or_update:name": "Office"
-          content_types:
-            - "!get:app_label": "circuits"
-              "!get:model": "circuittermination"
-            - "!get:app_label": "dcim"
-              "!get:model": "device"
-            - "!get:app_label": "dcim"
-              "!get:model": "powerpanel"
-            - "!get:app_label": "dcim"
-              "!get:model": "rack"
-            - "!get:app_label": "dcim"
-              "!get:model": "rackgroup"
-            - "!get:app_label": "ipam"
-              "!get:model": "prefix"
-            - "!get:app_label": "ipam"
-              "!get:model": "vlan"
-            - "!get:app_label": "ipam"
-              "!get:model": "vlangroup"
-            - "!get:app_label": "virtualization"
-              "!get:model": "cluster"
+          - "!create_or_update:name": "Office"
+            content_types:
+              - "!get:app_label": "circuits"
+                "!get:model": "circuittermination"
+              - "!get:app_label": "dcim"
+                "!get:model": "device"
+              - "!get:app_label": "dcim"
+                "!get:model": "powerpanel"
+              - "!get:app_label": "dcim"
+                "!get:model": "rack"
+              - "!get:app_label": "dcim"
+                "!get:model": "rackgroup"
+              - "!get:app_label": "ipam"
+                "!get:model": "prefix"
+              - "!get:app_label": "ipam"
+                "!get:model": "vlan"
+              - "!get:app_label": "ipam"
+                "!get:model": "vlangroup"
+              - "!get:app_label": "virtualization"
+                "!get:model": "cluster"
