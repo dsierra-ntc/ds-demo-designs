@@ -1,9 +1,10 @@
-"""Base data required for branch sites."""
+"""Base Data design job for creating reference data."""
 
 from nautobot.apps.jobs import register_jobs
 from nautobot_design_builder.design_job import DesignJob
 
 from .context import BaseContext
+
 
 class CreateBase(DesignJob):
     """Job to create base elements for other designs."""
@@ -17,6 +18,7 @@ class CreateBase(DesignJob):
         context_class = BaseContext
         has_sensitive_variables = False
         description = "Create base elements for other designs"
+
 
 name = "Base Data"
 register_jobs(CreateBase)
