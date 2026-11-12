@@ -1,6 +1,6 @@
-"""Basic design demonstrates the capabilities of the Design Builder."""
+"""Branch Design Job."""
 
-from nautobot.apps.jobs import IntegerVar, ObjectVar, ChoiceVar, StringVar, register_jobs
+from nautobot.apps.jobs import ChoiceVar, IntegerVar, ObjectVar, register_jobs
 from nautobot.dcim.models import Location
 from nautobot.ipam.models import Prefix
 from nautobot_design_builder.design_job import DesignJob
@@ -28,8 +28,7 @@ class BranchDesign(DesignJob):
         description="Size profile for the site",
         choices=(
             ("normal", "Normal"),
-            ("medium", "Medium"),
-            ("large", "Large"),
+            ("ebc", "EBC"),
         ),
         default="normal"
     )
@@ -44,7 +43,13 @@ class BranchDesign(DesignJob):
         default="2",
     )
 
-    aps_per_site = IntegerVar(min_value=1, max_value=6, default=2)
+    aps_per_site = IntegerVar(
+        label="Number of APs",
+        min_value=1,
+        max_value=6,
+        default=2
+    )
+
 
     class Meta:
         """Metadata describing this design job."""
@@ -54,7 +59,7 @@ class BranchDesign(DesignJob):
         has_sensitive_variables = False
         design_file = "designs/0001_design.yaml.j2"
         context_class = BranchDesignContext
-        nautobot_version = ">=2"
+        nautobot_version = ">=3.2"
         description = "Create a new branch site"
         extensions = [ext.LookupExtension, ext.ChildPrefixExtension]
 
