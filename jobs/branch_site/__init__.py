@@ -1,10 +1,10 @@
-"""Branch Design Job."""
+"""Branch site design for deploying office infrastructure."""
 
 from nautobot.apps.jobs import ChoiceVar, IntegerVar, ObjectVar, register_jobs
 from nautobot.dcim.models import Location
 from nautobot.ipam.models import Prefix
-from nautobot_design_builder.design_job import DesignJob
 from nautobot_design_builder.contrib import ext
+from nautobot_design_builder.design_job import DesignJob
 
 from .context import BranchDesignContext
 
@@ -25,7 +25,7 @@ class BranchDesign(DesignJob):
 
     office_type = ChoiceVar(
         label="Office Type",
-        description="Size profile for the site",
+        description="Office variant and configuration",
         choices=(
             ("normal", "Normal"),
             ("ebc", "EBC"),
@@ -33,23 +33,13 @@ class BranchDesign(DesignJob):
         default="normal"
     )
 
-    switch_stack_size = ChoiceVar(
-        label="Switch Stack Size",
-        description="Number of access switches in the virtual chassis",
-        choices=(
-            ("2", "2 switches"),
-            ("4", "4 switches"),
-        ),
-        default="2",
-    )
-
     aps_per_site = IntegerVar(
-        label="Number of APs",
+        label="Access Points per Site",
+        description="Number of wireless access points to deploy",
         min_value=1,
-        max_value=6,
+        max_value=4,
         default=2
     )
-
 
     class Meta:
         """Metadata describing this design job."""
@@ -63,5 +53,5 @@ class BranchDesign(DesignJob):
         description = "Create a new branch site"
         extensions = [ext.LookupExtension, ext.ChildPrefixExtension]
 
-name = "David Test Designs"
+name = "Branch Office Design"
 register_jobs(BranchDesign)

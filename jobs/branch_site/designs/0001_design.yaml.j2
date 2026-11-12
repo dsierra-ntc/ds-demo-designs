@@ -1,6 +1,7 @@
 ---
 {% set site_name = site.name %}
 {% set site_prefix_cidr = site_prefix.prefix | string %}
+{% set vlans = vlan_sets[office_type] %}
 
 prefixes:
   - "!get:id": "{{ site_prefix.id }}"
@@ -19,22 +20,16 @@ locations:
     {% endfor %}
     prefixes:
     {% for v in vlans %}
-      - "!child_prefix":
-          parent: "!ref:parent_prefix"
-          offset: "{{ v.offset }}"
+      - "!create_or_update:prefix": "{{ get_child_prefix_cidr(site_prefix_cidr, v.offset) }}"
         status__name: "Active"
-        location: "!ref:site"
+        locations: ["!ref:site"]
         vlan: "!ref:vlan_{{ v.vid }}"
+        "!ref": "vlan_prefix_{{ v.vid }}"
     {% endfor %}
 
 racks:
-  - name: "{{ site_name }}-101"
+  - "!create_or_update:name": "{{ site_name }}-101"
     "!ref": "rack1"
-    location: "!ref:site"
-    status__name: "Planned"
-
-  - name: "{{ site_name }}-201"
-    "!ref": "rack2"
     location: "!ref:site"
     status__name: "Planned"
 
@@ -45,8 +40,8 @@ racks:
 {% macro dev_name(base) %}{{ base }}.{{ site_name | lower }}{% endmacro %}
 
 devices:
-{% for d in devices if d.min_stack is not defined or d.min_stack <= (switch_stack_size | int) %}
-  - name: "{{ dev_name(d.name) }}"
+{% for d in devices %}
+  - "!create_or_update:name": "{{ dev_name(d.name) }}"
     location: "!ref:site"
     device_type__model: "{{ d.model }}"
     role__name: "{{ d.role }}"
@@ -80,7 +75,7 @@ devices:
     primary_ip4: { "!get:address": "{{ mgmt_ip(d.host) }}", deferred: true }
 {% endfor %}
 {% for i in range(aps_per_site) %}
-  - name: "{{ dev_name('ap' ~ i) }}"
+  - "!create_or_update:name": "{{ dev_name('ap' ~ i) }}"
     location: "!ref:site"
     device_type__model: "{{ access_point.model }}"
     role__name: "{{ access_point.role }}"
@@ -110,7 +105,7 @@ cables:
   - "!lookup:termination_a":
       content-type: "dcim.interface"
       device__name: "{{ dev_name('ap' ~ i) }}"
-      name: "eth1"
+      name: "{{ access_point.mgmt_interface }}"
     "!lookup:termination_b":
       content-type: "dcim.interface"
       device__name: "{{ dev_name(access_point.switch) }}"
