@@ -1,3 +1,5 @@
+"""Base data required for branch sites."""
+
 from nautobot.apps.jobs import register_jobs
 from nautobot_design_builder.design_job import DesignJob
 
@@ -16,5 +18,5 @@ class CreateBase(DesignJob):
         has_sensitive_variables = False
         description = "Create base elements for other designs"
 
-name = "David Test Designs"
+name = "Base Data Design"
 register_jobs(CreateBase)
