@@ -8,6 +8,38 @@ prefixes:
   - "!get:id": "{{ office_prefix.id }}"
     "!ref": "parent_prefix"
 
+ip_addresses:
+{% for d in static_devices | selectattr('role', 'eq', 'Firewall') | list %}
+  - "!next_ip":
+      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
+    "!ref": "ip_firewall_{{ loop.index0 }}"
+    status__name: "Active"
+{% endfor %}
+{% for d in static_devices | selectattr('role', 'eq', 'Console Server') | list %}
+  - "!next_ip":
+      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
+    "!ref": "ip_console_{{ loop.index0 }}"
+    status__name: "Active"
+{% endfor %}
+{% for i in range(switch_stack_size) %}
+  - "!next_ip":
+      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
+    "!ref": "ip_switch_{{ i }}"
+    status__name: "Active"
+{% endfor %}
+{% for i in range(pdu_count) %}
+  - "!next_ip":
+      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
+    "!ref": "ip_pdu_{{ i }}"
+    status__name: "Active"
+{% endfor %}
+{% for i in range(ap_count) %}
+  - "!next_ip":
+      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
+    "!ref": "ip_ap_{{ i }}"
+    status__name: "Active"
+{% endfor %}
+
 locations:
   - "!create_or_update:id": "{{ office.id }}"
     "!ref": "office"
@@ -18,37 +50,6 @@ locations:
           length: {{ v.prefixlen }}
         status__name: "Active"
         "!ref": "vlan_prefix_{{ v.vid }}"
-    {% endfor %}
-    ip_addresses:
-    {% for d in static_devices | selectattr('role', 'eq', 'Firewall') | list %}
-      - "!next_ip":
-          prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-        "!ref": "ip_firewall_{{ loop.index0 }}"
-        status__name: "Active"
-    {% endfor %}
-    {% for d in static_devices | selectattr('role', 'eq', 'Console Server') | list %}
-      - "!next_ip":
-          prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-        "!ref": "ip_console_{{ loop.index0 }}"
-        status__name: "Active"
-    {% endfor %}
-    {% for i in range(switch_stack_size) %}
-      - "!next_ip":
-          prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-        "!ref": "ip_switch_{{ i }}"
-        status__name: "Active"
-    {% endfor %}
-    {% for i in range(pdu_count) %}
-      - "!next_ip":
-          prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-        "!ref": "ip_pdu_{{ i }}"
-        status__name: "Active"
-    {% endfor %}
-    {% for i in range(ap_count) %}
-      - "!next_ip":
-          prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-        "!ref": "ip_ap_{{ i }}"
-        status__name: "Active"
     {% endfor %}
     vlans:
     {% for v in vlans %}
