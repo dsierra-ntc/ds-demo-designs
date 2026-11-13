@@ -24,5 +24,5 @@ class BranchDesignContext(Context):
         """
         parent_net = IPv4Network(parent_cidr, strict=False)
         offset_net = IPv4Network(offset, strict=False)
-        child_ip = parent_net.network_address + (offset_net.network_address - IPv4Network("0.0.0.0/0").network_address)
+        child_ip = parent_net.network_address + int(offset_net.network_address)
         return f"{child_ip}/{offset_net.prefixlen}"
