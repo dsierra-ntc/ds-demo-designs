@@ -53,6 +53,7 @@ devices:
     {% set device_index = console_index %}
     {% set console_index = console_index + 1 %}
   {% endif %}
+  # {{ d.name }}: device_type={{ device_type }}, device_index={{ device_index }}, fw_index={{ fw_index }}, console_index={{ console_index }}
   - "!create_or_update:name": "{{ dev_name(d.name) }}"
     location: "!ref:office"
     device_type__model: "{{ d.model }}"
