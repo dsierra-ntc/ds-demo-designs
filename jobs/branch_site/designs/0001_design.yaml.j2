@@ -4,7 +4,7 @@
 {% set vlans = vlan_sets[office_type] %}
 
 prefixes:
-  - "!get:id": "{{ site_prefix.id }}"
+  - "!get:id": "{{ office_prefix.id }}"
     "!ref": "parent_prefix"
 
 locations:
