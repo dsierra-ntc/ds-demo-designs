@@ -48,7 +48,7 @@ class BranchDesignContext(Context):
     def get_device_position(self, device_type: str, device_index: int) -> int:
         """Calculate rack position for a device based on rack layout config.
 
-        Positions are calculated top-down from position 48, accounting for
+        Positions are calculated top-down from position 40, accounting for
         device RU sizes and the order defined in rack_layout.
 
         Args:
@@ -63,7 +63,7 @@ class BranchDesignContext(Context):
         for layout_entry in self.rack_layout:
             if layout_entry["type"] == device_type:
                 # Found our device type, calculate its position
-                return current_position + device_index
+                return current_position - (device_index * layout_entry["ru_each"])
 
             # Move past this device type's RUs
             entry_count = self._get_device_count(layout_entry["count"])

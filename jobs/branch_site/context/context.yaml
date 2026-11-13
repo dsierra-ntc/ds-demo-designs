@@ -3,7 +3,7 @@
 # Rack positions are calculated top-down from position 48
 rack_layout:
   - {type: firewall, count: 2, ru_each: 2}
-  - {type: console, count: 1, ru_each: 2}
+  - {type: console, count: 1, ru_each: 1}
   - {type: switch, count: "switch_stack_size", ru_each: 1}
   - {type: pdu, count: "pdu_count", ru_each: 1}
 
