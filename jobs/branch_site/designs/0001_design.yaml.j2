@@ -87,7 +87,7 @@ devices:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
           - ip_address: "!ref:ip_firewall_{{ loop.index0 }}"
-    primary_ip4: { "!ref:ip_firewall_{{ loop.index0 }}", deferred: true }
+    primary_ip4: { "!get:address": "!ref:ip_firewall_{{ loop.index0 }}", deferred: true }
 {% endfor %}
 
 # Static devices - console servers
@@ -108,7 +108,7 @@ devices:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
           - ip_address: "!ref:ip_console_{{ loop.index0 }}"
-    primary_ip4: { "!ref:ip_console_{{ loop.index0 }}", deferred: true }
+    primary_ip4: { "!get:address": "!ref:ip_console_{{ loop.index0 }}", deferred: true }
 {% endfor %}
 
 # Dynamic switch stack
@@ -139,7 +139,7 @@ devices:
       - "!create_or_update:name": "{{ switch.mgmt_interface }}"
         ip_address_assignments:
           - ip_address: "!ref:ip_switch_{{ i }}"
-    primary_ip4: { "!ref:ip_switch_{{ i }}", deferred: true }
+    primary_ip4: { "!get:address": "!ref:ip_switch_{{ i }}", deferred: true }
 {% endfor %}
 
 # Dynamic PDUs
@@ -158,7 +158,7 @@ devices:
       - "!create_or_update:name": "{{ pdu.mgmt_interface }}"
         ip_address_assignments:
           - ip_address: "!ref:ip_pdu_{{ i }}"
-    primary_ip4: { "!ref:ip_pdu_{{ i }}", deferred: true }
+    primary_ip4: { "!get:address": "!ref:ip_pdu_{{ i }}", deferred: true }
 {% endfor %}
 
 # Access points
@@ -172,5 +172,5 @@ devices:
       - "!create_or_update:name": "{{ access_point.mgmt_interface }}"
         ip_address_assignments:
           - ip_address: "!ref:ip_ap_{{ i }}"
-    primary_ip4: { "!ref:ip_ap_{{ i }}", deferred: true }
+    primary_ip4: { "!get:address": "!ref:ip_ap_{{ i }}", deferred: true }
 {% endfor %}
