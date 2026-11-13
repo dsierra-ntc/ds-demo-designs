@@ -2,19 +2,10 @@
 {% set office_name = office.name %}
 {% set office_prefix_cidr = office_prefix.prefix | string %}
 {% set vlans = vlan_sets[office_type] %}
-{% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
-{% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 prefixes:
   - "!get:id": "{{ office_prefix.id }}"
     "!ref": "parent_prefix"
-{% for v in vlans %}
-  - "!next_prefix":
-      prefix: ["{{ office_prefix_cidr }}"]
-      length: {{ v.prefixlen }}
-    status__name: "Active"
-    "!ref": "vlan_prefix_{{ v.vid }}"
-{% endfor %}
 
 locations:
   - "!create_or_update:id": "{{ office.id }}"
@@ -26,7 +17,14 @@ locations:
         description: "{{ v.description }}"
         status__name: "Active"
         "!ref": "vlan_{{ v.vid }}"
-        prefix: "!ref:vlan_prefix_{{ v.vid }}"
+    {% endfor %}
+    prefixes:
+    {% for v in vlans %}
+      - "!create_or_update:prefix": "{{ get_child_prefix_cidr(office_prefix_cidr, v.offset) }}"
+        status__name: "Active"
+        locations: ["!ref:office"]
+        vlan: "!ref:vlan_{{ v.vid }}"
+        "!ref": "vlan_prefix_{{ v.vid }}"
     {% endfor %}
 
 racks:
@@ -35,6 +33,10 @@ racks:
     location: "!ref:office"
     status__name: "Planned"
 
+{% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
+{% set mgmt_base = mgmt_vlan.offset.split('/')[0].rsplit('.', 1)[0] %}
+{% set mgmt_mask = mgmt_vlan.offset.split('/')[1] %}
+{% macro mgmt_ip(host) %}{{ office_prefix_cidr | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
 {% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 devices:
@@ -55,8 +57,10 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
-    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("firewall", loop.index0)) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("firewall", loop.index0)) }}", deferred: true }
 {% endfor %}
 
 # Static devices - console servers
@@ -76,8 +80,10 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
-    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("console", loop.index0)) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("console", loop.index0)) }}", deferred: true }
 {% endfor %}
 
 # Dynamic switch stack
@@ -107,8 +113,10 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ switch.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, switch.hosts[i]) }}"
-    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, switch.hosts[i]) }}"
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("switch", i)) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("switch", i)) }}", deferred: true }
 {% endfor %}
 
 # Dynamic PDUs
@@ -126,8 +134,10 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ pdu.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, pdu.hosts[i]) }}"
-    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, pdu.hosts[i]) }}"
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("pdu", i)) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("pdu", i)) }}", deferred: true }
 {% endfor %}
 
 # Access points
@@ -140,6 +150,8 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ access_point.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, access_point.first_host + i) }}"
-    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, access_point.first_host + i) }}"
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(access_point.first_host + i) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(access_point.first_host + i) }}", deferred: true }
 {% endfor %}

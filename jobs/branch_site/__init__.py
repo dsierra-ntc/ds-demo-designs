@@ -78,7 +78,7 @@ class BranchDesign(DesignJob):
         context_class = BranchDesignContext
         nautobot_version = ">=3.2"
         description = "Create a new branch site"
-        extensions = [ext.LookupExtension, ext.ChildPrefixExtension, ext.NextPrefixExtension, ext.NextIpExtension]
+        extensions = [ext.LookupExtension, ext.ChildPrefixExtension]
 
 
 name = "Branch Office Design"
