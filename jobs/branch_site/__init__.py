@@ -44,6 +44,14 @@ class BranchDesign(DesignJob):
         default="normal",
     )
 
+    switch_stack_size = IntegerVar(
+        label="Switch stack size",
+        description="Number of members in virtual chassis",
+        min_value=2,
+        max_value=10,
+        default=2,
+    )
+
     ap_count = IntegerVar(
         label="Wireless access point count",
         description="Number of wireless access points to deploy",
@@ -53,7 +61,11 @@ class BranchDesign(DesignJob):
     )
 
     pdu_count = IntegerVar(
-        label="PDU count", description="Number of PDU to deploy", min_value=1, max_value=4, default=2
+        label="PDU count", 
+        description="Number of PDU to deploy", 
+        min_value=1, 
+        max_value=4, 
+        default=2
     )
 
     class Meta:
