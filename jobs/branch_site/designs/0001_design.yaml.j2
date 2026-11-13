@@ -40,19 +40,8 @@ racks:
 {% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 devices:
-# Static devices (firewall, console)
-{% set fw_counter = namespace(index=0) %}
-{% set console_counter = namespace(index=0) %}
-{% for d in static_devices %}
-  {% if get_device_type_from_role(d.role) == "firewall" %}
-    {% set device_type = "firewall" %}
-    {% set device_index = fw_counter.index %}
-    {% set _ = fw_counter.update(index=fw_counter.index + 1) %}
-  {% elif get_device_type_from_role(d.role) == "console" %}
-    {% set device_type = "console" %}
-    {% set device_index = console_counter.index %}
-    {% set _ = console_counter.update(index=console_counter.index + 1) %}
-  {% endif %}
+# Static devices - firewalls
+{% for d in static_devices | selectattr('role', 'eq', 'Firewall') | list %}
   - "!create_or_update:name": "{{ dev_name(d.name) }}"
     location: "!ref:office"
     device_type__model: "{{ d.model }}"
@@ -61,7 +50,7 @@ devices:
     status__name: "Planned"
     {% if d.rack is defined %}
     rack: "!ref:{{ d.rack }}"
-    position: {{ get_device_position(device_type, device_index) }}
+    position: {{ get_device_position("firewall", loop.index0) }}
     face: front
     {% endif %}
     "!ref": "{{ d.name }}"
@@ -69,9 +58,32 @@ devices:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
           - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(get_host_octet(device_type, device_index)) }}"
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("firewall", loop.index0)) }}"
               status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet(device_type, device_index)) }}", deferred: true }
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("firewall", loop.index0)) }}", deferred: true }
+{% endfor %}
+
+# Static devices - console servers
+{% for d in static_devices | selectattr('role', 'eq', 'Console Server') | list %}
+  - "!create_or_update:name": "{{ dev_name(d.name) }}"
+    location: "!ref:office"
+    device_type__model: "{{ d.model }}"
+    role__name: "{{ d.role }}"
+    platform__name: "{{ d.platform }}"
+    status__name: "Planned"
+    {% if d.rack is defined %}
+    rack: "!ref:{{ d.rack }}"
+    position: {{ get_device_position("console", loop.index0) }}
+    face: front
+    {% endif %}
+    "!ref": "{{ d.name }}"
+    interfaces:
+      - "!create_or_update:name": "{{ d.mgmt_interface }}"
+        ip_address_assignments:
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("console", loop.index0)) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("console", loop.index0)) }}", deferred: true }
 {% endfor %}
 
 # Dynamic switch stack
