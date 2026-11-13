@@ -25,11 +25,11 @@ class BranchDesign(DesignJob):
     )
 
     expand_user_prefix = ChoiceVar(
-        label="Expand uder prefix",
+        label="User prefix block size",
         description="Standard or extended user prefix block",
         choices=(
-            ("no", "No (Standard)"),
-            ("yes", "Yes (Extended)"),
+            ("standard", "Standard"),
+            ("extended", "Extended"),
         ),
         default="no",
     )
