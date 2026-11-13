@@ -110,3 +110,26 @@ class BranchDesignContext(Context):
             "PDU": "pdu",
         }
         return role_map.get(role, role.lower())
+
+    def get_management_ip(self, office_prefix_str: str, host_octet: int) -> str:
+        """Calculate management IP address for a device.
+
+        The management VLAN will be the first /24 carved from the office prefix.
+        This method calculates the device's IP within that subnet using the host octet.
+
+        Args:
+            office_prefix_str: Office prefix CIDR (e.g., "10.59.0.0/16")
+            host_octet: Host octet for the device (e.g., 101, 102, etc.)
+
+        Returns:
+            IP address string (e.g., "10.59.0.101")
+        """
+        office_net = IPv4Network(office_prefix_str, strict=False)
+        # The management VLAN is the first /24 of the office prefix
+        mgmt_net = IPv4Network(
+            f"{office_net.network_address}/24",
+            strict=False
+        )
+        # Calculate the device IP by adding the host octet to the network address
+        device_ip = mgmt_net.network_address + host_octet
+        return str(device_ip)

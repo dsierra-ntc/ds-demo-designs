@@ -3,6 +3,7 @@
 {% set office_prefix_cidr = office_prefix.prefix | string %}
 {% set vlans = vlan_sets[office_type] %}
 {% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
+{% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 prefixes:
   - "!get:id": "{{ office_prefix.id }}"
@@ -13,39 +14,6 @@ prefixes:
       length: {{ v.prefixlen }}
     status__name: "Active"
     "!ref": "vlan_prefix_{{ v.vid }}"
-{% endfor %}
-
-ip_addresses:
-{% for d in static_devices | selectattr('role', 'eq', 'Firewall') | list %}
-  - "!next_ip":
-      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-    "!ref": "ip_firewall_{{ loop.index0 }}"
-    status__name: "Active"
-    deferred: true
-{% endfor %}
-{% for d in static_devices | selectattr('role', 'eq', 'Console Server') | list %}
-  - "!next_ip":
-      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-    "!ref": "ip_console_{{ loop.index0 }}"
-    status__name: "Active"
-{% endfor %}
-{% for i in range(switch_stack_size) %}
-  - "!next_ip":
-      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-    "!ref": "ip_switch_{{ i }}"
-    status__name: "Active"
-{% endfor %}
-{% for i in range(pdu_count) %}
-  - "!next_ip":
-      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-    "!ref": "ip_pdu_{{ i }}"
-    status__name: "Active"
-{% endfor %}
-{% for i in range(ap_count) %}
-  - "!next_ip":
-      prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-    "!ref": "ip_ap_{{ i }}"
-    status__name: "Active"
 {% endfor %}
 
 locations:
@@ -87,8 +55,8 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "!ref:ip_firewall_{{ loop.index0 }}"
-    primary_ip4: { "!ref": "ip_firewall_{{ loop.index0 }}", deferred: true }
+          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
+    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
 {% endfor %}
 
 # Static devices - console servers
@@ -108,8 +76,8 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "!ref:ip_console_{{ loop.index0 }}"
-    primary_ip4: { "!ref": "ip_console_{{ loop.index0 }}", deferred: true }
+          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
+    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, d.host) }}"
 {% endfor %}
 
 # Dynamic switch stack
@@ -139,8 +107,8 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ switch.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "!ref:ip_switch_{{ i }}"
-    primary_ip4: { "!ref": "ip_switch_{{ i }}", deferred: true }
+          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, switch.hosts[i]) }}"
+    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, switch.hosts[i]) }}"
 {% endfor %}
 
 # Dynamic PDUs
@@ -158,8 +126,8 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ pdu.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "!ref:ip_pdu_{{ i }}"
-    primary_ip4: { "!ref": "ip_pdu_{{ i }}", deferred: true }
+          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, pdu.hosts[i]) }}"
+    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, pdu.hosts[i]) }}"
 {% endfor %}
 
 # Access points
@@ -172,6 +140,6 @@ devices:
     interfaces:
       - "!create_or_update:name": "{{ access_point.mgmt_interface }}"
         ip_address_assignments:
-          - ip_address: "!ref:ip_ap_{{ i }}"
-    primary_ip4: { "!ref": "ip_ap_{{ i }}", deferred: true }
+          - ip_address: "{{ get_management_ip(office_prefix.prefix | string, access_point.first_host + i) }}"
+    primary_ip4: "{{ get_management_ip(office_prefix.prefix | string, access_point.first_host + i) }}"
 {% endfor %}
