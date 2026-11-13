@@ -40,7 +40,8 @@ racks:
 {% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 devices:
-{% for d in devices %}
+# Static devices
+{% for d in static_devices %}
   - "!create_or_update:name": "{{ dev_name(d.name) }}"
     location: "!ref:office"
     device_type__model: "{{ d.model }}"
@@ -53,19 +54,6 @@ devices:
     face: front
     {% endif %}
     "!ref": "{{ d.name }}"
-    {% if d.vc is defined %}
-    virtual_chassis:
-      {% if d.vc.master | default(false) %}
-      "!create_or_update:name": "{{ office_name | lower }}-{{ d.vc.name }}"
-      domain: "{{ office_name | upper }} VC"
-      master: "!ref:{{ d.name }}"
-      deferred: true
-      {% else %}
-      "!get:name": "{{ office_name | lower }}-{{ d.vc.name }}"
-      {% endif %}
-    vc_position: {{ d.vc.position }}
-    vc_priority: {{ d.vc.priority }}
-    {% endif %}
     interfaces:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
@@ -74,6 +62,62 @@ devices:
               status__name: "Active"
     primary_ip4: { "!get:address": "{{ mgmt_ip(d.host) }}", deferred: true }
 {% endfor %}
+
+# Dynamic switch stack
+{% for i in range(switch_stack_size) %}
+  - "!create_or_update:name": "{{ dev_name('switch' ~ (i + 1)) }}"
+    location: "!ref:office"
+    device_type__model: "{{ switch.model }}"
+    role__name: "{{ switch.role }}"
+    platform__name: "{{ switch.platform }}"
+    status__name: "Planned"
+    rack: "!ref:{{ switch.rack }}"
+    position: {{ switch.positions[i] }}
+    face: front
+    "!ref": "switch{{ i + 1 }}"
+    {% if i == 0 %}
+    virtual_chassis:
+      "!create_or_update:name": "{{ office_name | lower }}-{{ switch.vc_name }}"
+      domain: "{{ office_name | upper }} VC"
+      master: "!ref:switch{{ i + 1 }}"
+      deferred: true
+    {% else %}
+    virtual_chassis:
+      "!get:name": "{{ office_name | lower }}-{{ switch.vc_name }}"
+    {% endif %}
+    vc_position: {{ i + 1 }}
+    vc_priority: {{ switch.vc_priorities[i] }}
+    interfaces:
+      - "!create_or_update:name": "{{ switch.mgmt_interface }}"
+        ip_address_assignments:
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(switch.hosts[i]) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(switch.hosts[i]) }}", deferred: true }
+{% endfor %}
+
+# Dynamic PDUs
+{% for i in range(pdu_count) %}
+  - "!create_or_update:name": "{{ dev_name('pdu' ~ (i + 1)) }}"
+    location: "!ref:office"
+    device_type__model: "{{ pdu.model }}"
+    role__name: "{{ pdu.role }}"
+    platform__name: "{{ pdu.platform }}"
+    status__name: "Planned"
+    rack: "!ref:{{ pdu.rack }}"
+    position: {{ pdu.positions[i] }}
+    face: front
+    "!ref": "pdu{{ i + 1 }}"
+    interfaces:
+      - "!create_or_update:name": "{{ pdu.mgmt_interface }}"
+        ip_address_assignments:
+          - ip_address:
+              "!create_or_update:address": "{{ mgmt_ip(pdu.hosts[i]) }}"
+              status__name: "Active"
+    primary_ip4: { "!get:address": "{{ mgmt_ip(pdu.hosts[i]) }}", deferred: true }
+{% endfor %}
+
+# Access points
 {% for i in range(ap_count) %}
   - "!create_or_update:name": "{{ dev_name('ap' ~ i) }}"
     location: "!ref:office"
@@ -90,17 +134,49 @@ devices:
 {% endfor %}
 
 cables:
-{% for c in cables %}
+# Static device cables
   - "!lookup:termination_a":
       content-type: "dcim.interface"
-      device__name: "{{ dev_name(c.a.device) }}"
-      name: "{{ c.a.port }}"
+      device__name: "{{ dev_name('firewall01') }}"
+      name: "ethernet1/1"
     "!lookup:termination_b":
       content-type: "dcim.interface"
-      device__name: "{{ dev_name(c.b.device) }}"
-      name: "{{ c.b.port }}"
+      device__name: "{{ dev_name('switch01') }}"
+      name: "Eth1/1"
+    status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "{{ dev_name('opengear01') }}"
+      name: "sw0p0"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "{{ dev_name('switch01') }}"
+      name: "Eth1/2"
+    status__name: "Planned"
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "{{ dev_name('firewall02') }}"
+      name: "ethernet1/1"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "{{ dev_name('switch02') }}"
+      name: "Eth1/1"
+    status__name: "Planned"
+
+# PDU to switch cables
+{% for i in range(pdu_count) %}
+  - "!lookup:termination_a":
+      content-type: "dcim.interface"
+      device__name: "{{ dev_name('pdu' ~ (i + 1)) }}"
+      name: "{{ pdu.mgmt_interface }}"
+    "!lookup:termination_b":
+      content-type: "dcim.interface"
+      device__name: "{{ dev_name('switch01') }}"
+      name: "Eth1/{{ 3 + i }}"
     status__name: "Planned"
 {% endfor %}
+
+# Access point cables
 {% for i in range(ap_count) %}
   - "!lookup:termination_a":
       content-type: "dcim.interface"

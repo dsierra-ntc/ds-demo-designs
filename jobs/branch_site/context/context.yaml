@@ -1,28 +1,45 @@
 ---
-# NOTE: entries with min_stack: N are only created when the chosen switch stack size is >= N.
-# NOTE: a virtual chassis master (vc.master: true) must be listed before the other members.
-devices:
+# Static devices
+static_devices:
   - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 30, host: 101, mgmt_interface: management}
   - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 28, host: 102, mgmt_interface: management}
-  - {name: switch01,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 27, host: 103, mgmt_interface: MGT, vc: {name: stack, position: 1, priority: 2, master: true}}
-  - {name: switch02,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 26, host: 104, mgmt_interface: MGT, vc: {name: stack, position: 2, priority: 1}}
-  - {name: switch03,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 23, host: 113, mgmt_interface: MGT, vc: {name: stack, position: 3, priority: 3}}
-  - {name: switch04,    model: C9300-48P-A, role: Access Switch,  platform: Cisco IOS, rack: rack1, position: 22, host: 114, mgmt_interface: MGT, vc: {name: stack, position: 4, priority: 4}}
   - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 25, host: 105, mgmt_interface: net1}
-  - {name: pdu01,       model: AP9570,      role: PDU,            platform: Linux,     rack: rack1, position: 24, host: 106, mgmt_interface: eth1}
+
+# Switch stack template - one per member in the stack
+switch:
+  model: C9300-48P-A
+  role: Access Switch
+  platform: Cisco IOS
+  rack: rack1
+  mgmt_interface: MGT
+  vc_name: stack
+  # Positions and hosts for each potential stack member (up to 10)
+  positions: [27, 26, 23, 22, 21, 20, 19, 18, 17, 16]
+  hosts: [103, 104, 113, 114, 115, 116, 117, 118, 119, 120]
+  vc_priorities: [2, 1, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# PDU template
+pdu:
+  model: AP9570
+  role: PDU
+  platform: Linux
+  rack: rack1
+  mgmt_interface: eth1
+  # Positions and hosts for each potential PDU (up to 4)
+  positions: [24, 23, 22, 21]
+  hosts: [106, 107, 108, 109]
 
 access_point:
   model: MR36
   role: Wireless Access Point
-  switch: switch02
+  switch: switch01
   first_port: 2
   mgmt_interface: eth1
-  first_host: 107   # ap0 gets .107, ap1 .108, ...
+  first_host: 110   # ap0 gets .110, ap1 .111, ...
 
 cables:
   - {a: {device: firewall01, port: ethernet1/1}, b: {device: switch01, port: Eth1/1}}
   - {a: {device: opengear01, port: sw0p0}, b: {device: switch01, port: Eth1/2}}
-  - {a: {device: pdu01,      port: eth1},  b: {device: switch01, port: Eth1/3}}
   - {a: {device: firewall02, port: ethernet1/1}, b: {device: switch02, port: Eth1/1}}
 
 vlan_sets:
@@ -40,23 +57,3 @@ vlan_sets:
 # Assumes the VLAN offset ends in .0 (e.g. 0.0.0.0/24).
 management:
   vlan: management
-
-# switch_stack:
-#   model: C9300-48P-A
-#   role: Access Switch
-#   platform: Cisco IOS
-#   rack: rack1
-#   mgmt_interface: MGT
-#   vc_name: stack
-#   members:   # master first; the first switch_stack_size members are created
-#     - {name: switch01, position: 27, host: 103, vc_position: 1, vc_priority: 4, master: true}
-#     - {name: switch02, position: 26, host: 104, vc_position: 2, vc_priority: 3}
-#     - {name: switch03, position: 25, host: 105, vc_position: 3, vc_priority: 2}
-#     - {name: switch04, position: 24, host: 106, vc_position: 4, vc_priority: 1}
-# 
-# {% for m in switch_stack.members[:(switch_stack_size | int)] %}
-#   - name: "{{ dev_name(m.name) }}"
-#     device_type__model: "{{ switch_stack.model }}"
-#     ...
-# {% endfor %}
-

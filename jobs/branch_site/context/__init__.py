@@ -11,6 +11,8 @@ class BranchDesignContext(Context):
 
     ap_count: int
     office_type: str
+    switch_stack_size: int
+    pdu_count: int
 
     def get_child_prefix_cidr(self, parent_cidr: str, offset: str) -> str:
         """Calculate child prefix CIDR by offsetting from parent prefix.
