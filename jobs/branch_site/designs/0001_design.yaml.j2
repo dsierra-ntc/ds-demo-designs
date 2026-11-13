@@ -59,7 +59,6 @@ devices:
           - ip_address:
               "!next_ip":
                 parent: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-                offset: {{ get_host_octet("firewall", loop.index0) }}
               status__name: "Active"
     primary_ip4:
       "!get:address":
@@ -89,7 +88,6 @@ devices:
           - ip_address:
               "!next_ip":
                 parent: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-                offset: {{ get_host_octet("console", loop.index0) }}
               status__name: "Active"
     primary_ip4:
       "!get:address":
@@ -129,7 +127,6 @@ devices:
           - ip_address:
               "!next_ip":
                 parent: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-                offset: {{ get_host_octet("switch", i) }}
               status__name: "Active"
     primary_ip4:
       "!get:address":
@@ -157,7 +154,6 @@ devices:
           - ip_address:
               "!next_ip":
                 parent: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-                offset: {{ get_host_octet("pdu", i) }}
               status__name: "Active"
     primary_ip4:
       "!get:address":
@@ -180,7 +176,6 @@ devices:
           - ip_address:
               "!next_ip":
                 parent: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
-                offset: {{ access_point.first_host + i }}
               status__name: "Active"
     primary_ip4:
       "!get:address":
