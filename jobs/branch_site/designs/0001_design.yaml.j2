@@ -21,6 +21,7 @@ ip_addresses:
       prefix: "!ref:vlan_prefix_{{ mgmt_vlan.vid }}"
     "!ref": "ip_firewall_{{ loop.index0 }}"
     status__name: "Active"
+    deferred: true
 {% endfor %}
 {% for d in static_devices | selectattr('role', 'eq', 'Console Server') | list %}
   - "!next_ip":
