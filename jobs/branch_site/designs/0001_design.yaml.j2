@@ -41,19 +41,18 @@ racks:
 
 devices:
 # Static devices (firewall, console)
-{% set fw_index = 0 %}
-{% set console_index = 0 %}
+{% set fw_counter = namespace(index=0) %}
+{% set console_counter = namespace(index=0) %}
 {% for d in static_devices %}
   {% if get_device_type_from_role(d.role) == "firewall" %}
     {% set device_type = "firewall" %}
-    {% set device_index = fw_index %}
-    {% set fw_index = fw_index + 1 %}
+    {% set device_index = fw_counter.index %}
+    {% set _ = fw_counter.update(index=fw_counter.index + 1) %}
   {% elif get_device_type_from_role(d.role) == "console" %}
     {% set device_type = "console" %}
-    {% set device_index = console_index %}
-    {% set console_index = console_index + 1 %}
+    {% set device_index = console_counter.index %}
+    {% set _ = console_counter.update(index=console_counter.index + 1) %}
   {% endif %}
-  # {{ d.name }}: device_type={{ device_type }}, device_index={{ device_index }}, fw_index={{ fw_index }}, console_index={{ console_index }}
   - "!create_or_update:name": "{{ dev_name(d.name) }}"
     location: "!ref:office"
     device_type__model: "{{ d.model }}"
