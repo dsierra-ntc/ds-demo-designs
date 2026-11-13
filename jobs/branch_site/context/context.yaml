@@ -1,9 +1,17 @@
 ---
+# Rack layout configuration - defines order and RU requirements for each device type
+# Rack positions are calculated top-down from position 48
+rack_layout:
+  - {type: firewall, count: 2, ru_each: 1}
+  - {type: console, count: 1, ru_each: 2}
+  - {type: switch, count: "switch_stack_size", ru_each: 1}
+  - {type: pdu, count: "pdu_count", ru_each: 1}
+
 # Static devices
 static_devices:
-  - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 30, host: 101, mgmt_interface: management}
-  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, position: 28, host: 102, mgmt_interface: management}
-  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, position: 25, host: 105, mgmt_interface: net1}
+  - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, host: 101, mgmt_interface: management}
+  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, host: 102, mgmt_interface: management}
+  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, host: 105, mgmt_interface: net1}
 
 # Switch stack template - one per member in the stack
 switch:
@@ -13,8 +21,7 @@ switch:
   rack: rack1
   mgmt_interface: MGT
   vc_name: stack
-  # Positions and hosts for each potential stack member (up to 10)
-  positions: [27, 26, 23, 22, 21, 20, 19, 18, 17, 16]
+  # Host octets for each potential stack member (up to 10)
   hosts: [103, 104, 113, 114, 115, 116, 117, 118, 119, 120]
   vc_priorities: [2, 1, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -25,8 +32,7 @@ pdu:
   platform: Linux
   rack: rack1
   mgmt_interface: eth1
-  # Positions and hosts for each potential PDU (up to 4)
-  positions: [24, 23, 22, 21]
+  # Host octets for each potential PDU (up to 4)
   hosts: [106, 107, 108, 109]
 
 access_point:

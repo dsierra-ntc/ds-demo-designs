@@ -40,8 +40,19 @@ racks:
 {% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
 
 devices:
-# Static devices
+# Static devices (firewall, console)
+{% set fw_index = 0 %}
+{% set console_index = 0 %}
 {% for d in static_devices %}
+  {% if get_device_type_from_role(d.role) == "firewall" %}
+    {% set device_type = "firewall" %}
+    {% set device_index = fw_index %}
+    {% set fw_index = fw_index + 1 %}
+  {% elif get_device_type_from_role(d.role) == "console" %}
+    {% set device_type = "console" %}
+    {% set device_index = console_index %}
+    {% set console_index = console_index + 1 %}
+  {% endif %}
   - "!create_or_update:name": "{{ dev_name(d.name) }}"
     location: "!ref:office"
     device_type__model: "{{ d.model }}"
@@ -50,7 +61,7 @@ devices:
     status__name: "Planned"
     {% if d.rack is defined %}
     rack: "!ref:{{ d.rack }}"
-    position: {{ d.position }}
+    position: {{ get_device_position(device_type, device_index) }}
     face: front
     {% endif %}
     "!ref": "{{ d.name }}"
@@ -58,9 +69,9 @@ devices:
       - "!create_or_update:name": "{{ d.mgmt_interface }}"
         ip_address_assignments:
           - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(d.host) }}"
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet(device_type, device_index)) }}"
               status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(d.host) }}", deferred: true }
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet(device_type, device_index)) }}", deferred: true }
 {% endfor %}
 
 # Dynamic switch stack
@@ -72,7 +83,7 @@ devices:
     platform__name: "{{ switch.platform }}"
     status__name: "Planned"
     rack: "!ref:{{ switch.rack }}"
-    position: {{ switch.positions[i] }}
+    position: {{ get_device_position("switch", i) }}
     face: front
     "!ref": "switch{{ i + 1 }}"
     {% if i == 0 %}
@@ -91,9 +102,9 @@ devices:
       - "!create_or_update:name": "{{ switch.mgmt_interface }}"
         ip_address_assignments:
           - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(switch.hosts[i]) }}"
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("switch", i)) }}"
               status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(switch.hosts[i]) }}", deferred: true }
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("switch", i)) }}", deferred: true }
 {% endfor %}
 
 # Dynamic PDUs
@@ -105,16 +116,16 @@ devices:
     platform__name: "{{ pdu.platform }}"
     status__name: "Planned"
     rack: "!ref:{{ pdu.rack }}"
-    position: {{ pdu.positions[i] }}
+    position: {{ get_device_position("pdu", i) }}
     face: front
     "!ref": "pdu{{ i + 1 }}"
     interfaces:
       - "!create_or_update:name": "{{ pdu.mgmt_interface }}"
         ip_address_assignments:
           - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(pdu.hosts[i]) }}"
+              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("pdu", i)) }}"
               status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(pdu.hosts[i]) }}", deferred: true }
+    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("pdu", i)) }}", deferred: true }
 {% endfor %}
 
 # Access points
