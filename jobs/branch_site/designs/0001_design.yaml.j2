@@ -1,5 +1,6 @@
 ---
 {% set office_name = office.name %}
+{% set office_prefix_cidr = office_prefix.prefix | string %}
 {% set vlans = vlan_sets[office_type] %}
 
 prefixes:
@@ -7,7 +8,7 @@ prefixes:
     "!ref": "parent_prefix"
 {% for v in vlans %}
   - "!next_prefix":
-      prefix: ["!ref:parent_prefix"]
+      prefix: ["{{ office_prefix_cidr }}"]
       length: {{ v.prefixlen }}
     status__name: "Active"
     locations: ["!ref:office"]

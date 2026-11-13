@@ -55,8 +55,7 @@ vlan_sets:
     - {vid: 30, name: voice,      description: "Voice",       prefixlen: 24}
   ebc:
     - {vid: 10, name: management, description: "Management",  prefixlen: 24}
-    - {vid: 20, name: users,      description: "User access", prefixlen: 25}
-    - {vid: 21, name: users_ext,  description: "Extended user access", prefixlen: 25}
+    - {vid: 20, name: users,      description: "User access", prefixlen: 23}
     - {vid: 30, name: voice,      description: "Voice",       prefixlen: 24}
 
 # Devices get a primary IP from the named VLAN's prefix, using their `host` value as the last octet.
