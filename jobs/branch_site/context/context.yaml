@@ -3,6 +3,7 @@
 device_counts:
   console: 1
   switch: 2       # default, overridden by input
+  firewall: 2
 
 
 device_detail:

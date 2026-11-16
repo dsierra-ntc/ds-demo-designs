@@ -25,4 +25,5 @@ class BranchDesignContext(Context):
         return {
             "console": 1,
             "switch": self.switch_stack_size,
+            "firewall": 2,
         }
