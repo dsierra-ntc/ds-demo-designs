@@ -10,15 +10,6 @@ prefixes:
 locations:
   - "!get:id": "{{ office.id }}"
     "!ref": "office"
-    prefixes:
-    {% for v in vlans %}
-      - "!next_prefix":
-          prefix: ["{{ office_prefix_cidr }}"]
-          length: {{ v.prefixlen }}
-        status__name: "Active"
-        locations: ["!ref:office"]
-        "!ref": "vlan_prefix_{{ v.vid }}"
-    {% endfor %}
     vlans:
     {% for v in vlans %}
       - "!create_or_update:vid": {{ v.vid }}
@@ -26,21 +17,13 @@ locations:
         description: "{{ v.description }}"
         status__name: "Active"
         "!ref": "vlan_{{ v.vid }}"
-        prefix: !ref:vlan_prefix_{{ v.vid }}"
     {% endfor %}
-
 
 racks:
   - "!create_or_update:name": "{{ office_name }}-101"
     "!ref": "rack1"
     location: "!ref:office"
     status__name: "Planned"
-
-{% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
-{% set mgmt_base = mgmt_vlan.offset.split('/')[0].rsplit('.', 1)[0] %}
-{% set mgmt_mask = mgmt_vlan.prefix %}
-{% macro mgmt_ip(host) %}{{ office_prefix_cidr | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
-{% macro device_name(role, index, office) %}{{ device_detail[role].name_prefix }}-{{ '%02d' | format(index) }}.{{ office | lower }}{% endmacro %}
 
 {% set device_counts = get_device_counts() %}
 devices:

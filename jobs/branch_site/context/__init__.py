@@ -14,21 +14,6 @@ class BranchDesignContext(Context):
     switch_stack_size: int
     pdu_count: int
 
-    def get_child_prefix_cidr(self, parent_cidr: str, offset: str) -> str:
-        """Calculate child prefix CIDR by offsetting from parent prefix.
-
-        Args:
-            parent_cidr: Parent prefix as string (e.g., "10.0.0.0/16")
-            offset: Offset prefix as string (e.g., "0.0.1.0/24")
-
-        Returns:
-            Child prefix CIDR string
-        """
-        parent_net = IPv4Network(parent_cidr, strict=False)
-        offset_net = IPv4Network(offset, strict=False)
-        child_ip = parent_net.network_address + int(offset_net.network_address)
-        return f"{child_ip}/{offset_net.prefixlen}"
-
     def get_device_counts(self) -> dict[str, int]:
         """Return device counts by role.
 
