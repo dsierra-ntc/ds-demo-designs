@@ -31,7 +31,7 @@ class BranchDesign(DesignJob):
             ("standard", "Standard"),
             ("extended", "Extended"),
         ),
-        default="no",
+        default="standard",
     )
 
     office_type = ChoiceVar(
