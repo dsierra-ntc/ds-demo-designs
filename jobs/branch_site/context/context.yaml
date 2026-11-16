@@ -15,7 +15,7 @@ device_detail:
     role: console-server
     platform: Opengear
     rack: rack1
-    position: 42
+    position: [42]
     host: 11
     mgmt_interface: net1
 
@@ -37,7 +37,7 @@ device_detail:
     role: edge-firewall
     platform: PAN-OS
     rack: rack1
-    position: 36
+    position: [36]
     mgmt_interface: management
     hosts: [4, 5]
 
@@ -47,7 +47,7 @@ device_detail:
     role: ups
     platform: APC AOS
     rack: rack1
-    position: 2
+    position: [2]
     host: 12
     mgmt_interface: Ethernet
 
