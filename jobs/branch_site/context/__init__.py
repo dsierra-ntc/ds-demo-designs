@@ -23,7 +23,7 @@ class BranchDesignContext(Context):
             Dict mapping device role names to counts
         """
 
-        counts = self.get_device_counts.copy()
+        counts = self.device_counts.copy()
         counts.update({
             "switch": self.switch_stack_size,
             "pdu": self.pdu_count,
