@@ -22,11 +22,11 @@ class BranchDesignContext(Context):
         Returns:
             Dict mapping device role names to counts
         """
-        return {
-            "console": 1,
+
+        counts = self.get_device_counts.copy()
+        counts.update({
             "switch": self.switch_stack_size,
-            "firewall": 2,
-            "ups": 1,
             "pdu": self.pdu_count,
             "ap": self.ap_count,
-        }
+        })
+        return counts
