@@ -8,7 +8,6 @@ device_counts:
   pdu: 2          # default, overridden by input
   ap: 2           # default, overridden by input
 
-
 device_detail:
   console:
     name_prefix: con
@@ -26,7 +25,7 @@ device_detail:
     role: office-switch
     platform: Cisco IOS
     rack: rack1
-    position: [40, 39, 38, 37]
+    position: [41, 40, 39, 38]
     host: [10, 9, 8, 7]
     mgmt_interface: GigabitEthernet0/0
     vc_name: stack
