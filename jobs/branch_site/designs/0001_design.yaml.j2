@@ -25,3 +25,17 @@ racks:
     location: "!ref:office"
     status__name: "Planned"
 
+{% macro device_name(role, index, office) %}{{ device_detail[role].name_prefix }}-{{ '%02d' | format(index) }}.{{ office | lower }}{% endmacro %}
+{% set device_counts = get_device_counts() %}
+
+devices:
+{% for device, count in device_counts.items() %}
+    {% for i in range(1, count + 1) %}
+  - "!create_or_update:name": "{{ device_name(device, i, office_name) }}"
+    location: "!ref:office"
+    device_type__model: "{{ device_detail[device].model }}"
+    role__name: "{{ device_detail[device].role }}"
+    platform__name: "{{ device_detail[device].platform }}"
+    status__name: "Planned"
+    {% endfor %}
+{% endfor %}
