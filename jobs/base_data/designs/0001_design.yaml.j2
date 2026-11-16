@@ -395,12 +395,12 @@ device_types:
     - "!create_or_update:name": "Network"
       type: "100base-tx"
       mgmt_only: true
-  - "!create_or_update:model": "MR36"
-    part_number: "MR36"
+  - "!create_or_update:model": "CW9166I-MR"
+    part_number: "CW9166I-MR"
     manufacturer__name: "Cisco Meraki"
     interface_templates:
-    - "!create_or_update:name": "eth1"
-      type: "1000base-t"
+    - "!create_or_update:name": "GigabitEthernet1"
+      type: "5gbase-t"
       mgmt_only: false
 
 roles:
