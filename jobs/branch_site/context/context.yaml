@@ -64,6 +64,7 @@ device_detail:
     name_prefix: ap
     model: CW9166I-MR
     role: wireless-ap
+    platform: Cisco Meraki
     host: 20
 
 vlan_sets:
