@@ -31,7 +31,7 @@ racks:
 devices:
 {% for device, count in device_counts.items() %}
     {% for i in range(0, count) %}
-  - "!create_or_update:name": "{{ device_name(device, i + 1, office_name) }}"
+  - "!create_or_update:name": "{{ device_name(device, loop.index, office_name) }}"
     location: "!ref:office"
     device_type__model: "{{ device_detail[device].model }}"
     role__name: "{{ device_detail[device].role }}"
@@ -39,10 +39,6 @@ devices:
     status__name: "Planned"
     {% if device_detail[device].rack is defined %}
     rack: "!ref:{{ device_detail[device].rack }}"
-    {% endif %}
-    {% if device_detail[device].position is defined %}
-    position: "{{ device_detail[device].position[i] }}" 
-    face: front
     {% endif %}
     {% endfor %}
 {% endfor %}
