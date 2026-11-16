@@ -58,11 +58,12 @@ class BranchDesignContext(Context):
         # Get available address space from parent prefix
         available_ipset = parent.get_available_prefixes()
 
-        # Find the first available subnet of requested size
+        # Find the first available block large enough to carve a subnet from
         for available in available_ipset.iter_cidrs():
             if prefixlen >= available.prefixlen:
-                # Create a subnet of the requested prefix length
-                subnet = netaddr.IPNetwork(f"{available.network}/{prefixlen}")
+                # Carve out the first subnet of the requested prefix length
+                subnet_generator = available.subnet(prefixlen)
+                subnet = next(subnet_generator)
                 return str(subnet)
 
         raise DesignImplementationError(
