@@ -4,7 +4,7 @@ manufacturers:
   - "!create_or_update:name": "Cisco"
   - "!create_or_update:name": "Cisco Meraki"
   - "!create_or_update:name": "Opengear"
-  - "!create_or_update:name": "Schneider Electric"
+  - "!create_or_update:name": "APC"
 
 platforms:
   - "!create_or_update:name": "PAN-OS"
@@ -14,9 +14,9 @@ platforms:
     "manufacturer__name": "Cisco"
     network_driver: "cisco_ios"
   - "!create_or_update:name": "APC AOS"
-    "manufacturer__name": "Schneider Electric"
+    "manufacturer__name": "APC"
     network_driver: "linux"
-  - "!create_or_update:name": "Linux"
+  - "!create_or_update:name": "Opengear"
     network_driver: "linux"
 
 device_types:
@@ -261,14 +261,38 @@ device_types:
       type: "iec-60320-c14"
     - "!create_or_update:name": "PS2"
       type: "iec-60320-c14"
-  - "!create_or_update:model": "AP9570"
-    part_number: "AP9570"
-    manufacturer__name: "Schneider Electric"
-    u_height: 1
+
+  - "!create_or_update:model": "SMT3000RMI2UC"
+    part_number: "SMT3000RMI2UC"
+    manufacturer__name: "APC"
+    u_height: 2
+    console_port_templates:
+    - "!create_or_update:name": "Serial"
+      type: "rj-45"
+    - "!create_or_update:name": "USB"
+      type: "usb-b"
+    power_port_templates:
+    - "!create_or_update:name": "Source"
+      type: "iec-60320-c14"
+    power_outlet_templates:
+    - "!create_or_update:name": "Group 1 Outlet 1"
+      type: "iec-60320-c13"
+    - "!create_or_update:name": "Group 1 Outlet 2"
+      type: "iec-60320-c13"
+    - "!create_or_update:name": "Group 1 Outlet 3"
+      type: "iec-60320-c13"
+    - "!create_or_update:name": "Group 2 Outlet 1"
+      type: "iec-60320-c13"
+    - "!create_or_update:name": "Group 2 Outlet 2"
+      type: "iec-60320-c13"
+    - "!create_or_update:name": "Group 2 Outlet 3"
+      type: "iec-60320-c13"
     interface_templates:
-    - "!create_or_update:name": "eth1"
+    - "!create_or_update:name": "Ethernet"
       type: "1000base-t"
-      mgmt_only: false
+      mgmt_only: true
+    module_bay_templates:
+    - "!create_or_update:name": "SmartSlot"
   - "!create_or_update:model": "MR36"
     part_number: "MR36"
     manufacturer__name: "Cisco Meraki"
