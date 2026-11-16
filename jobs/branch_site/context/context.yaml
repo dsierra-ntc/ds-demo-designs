@@ -4,6 +4,9 @@ device_counts:
   console: 1
   switch: 2       # default, overridden by input
   firewall: 2
+  ups: 1
+  pdu: 2          # default, overridden by input
+  ap: 2           # default, overridden by input
 
 
 device_detail:
@@ -35,7 +38,7 @@ device_detail:
     role: edge-firewall
     platform: PAN-OS
     rack: rack1
-    position: [36]
+    position: [36, 34]
     hosts: [4, 5]
     mgmt_interface: management
 

@@ -26,4 +26,7 @@ class BranchDesignContext(Context):
             "console": 1,
             "switch": self.switch_stack_size,
             "firewall": 2,
+            "ups": 1,
+            "pdu": self.pdu_count,
+            "ap": self.ap_count,
         }
