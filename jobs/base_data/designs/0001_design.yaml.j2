@@ -292,7 +292,6 @@ device_types:
       mgmt_only: true
     module_bay_templates:
     - "!create_or_update:name": "SmartSlot"
-
   - "!create_or_update:model": "APC"
     part_number: "AP8841"
     manufacturer__name: "APC"
@@ -416,6 +415,11 @@ roles:
         "!get:model": "device"
   - "!create_or_update:name": "console-server"
     color: "6d45c1"
+    content_types:
+      - "!get:app_label": "dcim"
+        "!get:model": "device"
+  - "!create_or_update:name": "ups"
+    color: "42f551"
     content_types:
       - "!get:app_label": "dcim"
         "!get:model": "device"
