@@ -42,6 +42,6 @@ class BranchDesignContext(Context):
             "console": 1,
             "switch": self.switch_stack_size,
             "pdu": self.pdu_count,
-            "ups": 1
+            "ups": 1,
             "ap": self.ap_count,
         }
