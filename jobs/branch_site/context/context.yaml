@@ -16,7 +16,7 @@ device_detail:
     platform: Opengear
     rack: rack1
     position: [42]
-    host: 11
+    host: [11]
     mgmt_interface: net1
 
   switch:
@@ -25,10 +25,10 @@ device_detail:
     role: office-switch
     platform: Cisco IOS
     rack: rack1
-    position: 40
+    position: [40, 39, 38, 37]
+    host: [10, 9, 8, 7]
     mgmt_interface: GigabitEthernet0/0
     vc_name: stack
-    hosts: [10, 9, 8, 7]
     vc_priorities: [2, 1, 3, 4]
 
   firewall:
@@ -38,8 +38,8 @@ device_detail:
     platform: PAN-OS
     rack: rack1
     position: [36]
-    mgmt_interface: management
     hosts: [4, 5]
+    mgmt_interface: management
 
   ups:
     name_prefix: ups
@@ -48,7 +48,7 @@ device_detail:
     platform: APC AOS
     rack: rack1
     position: [2]
-    host: 12
+    host: [12]
     mgmt_interface: Ethernet
 
   pdu:
