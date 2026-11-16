@@ -41,7 +41,7 @@ devices:
     rack: "!ref:{{ device_detail[device].rack }}"
     {% endif %}
     {% if device_detail[device].position is defined %}
-    position: "{{ device_detail[device].position[loop.index0] }}" 
+    position: "{{ device_detail[device].position[i] }}" 
     face: front
     {% endif %}
     {% endfor %}
