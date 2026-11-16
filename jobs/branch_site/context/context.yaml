@@ -2,11 +2,7 @@
 
 device_counts:
   console: 1
-  switch: 2       # default, overridden by input
-  firewall: 2
-  ups: 1
-  pdu: 2          # default, overridden by input
-  ap: 1           # default, overridden by input
+
 
 device_detail:
   console:
