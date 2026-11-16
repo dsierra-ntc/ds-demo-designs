@@ -18,6 +18,14 @@ locations:
         status__name: "Active"
         "!ref": "vlan_{{ v.vid }}"
     {% endfor %}
+    prefixes:
+    {% for v in vlans %}
+      - "!create_or_update:prefix": "{{ get_next_available_prefix(office_prefix.id, v.prefixlen) }}"
+        status__name: "Active"
+        locations: ["!ref:office"]
+        vlan: "!ref:vlan_{{ v.vid }}"
+        "!ref": "vlan_prefix_{{ v.vid }}"
+    {% endfor %}
 
 racks:
   - "!create_or_update:name": "{{ office_name }}-101"
