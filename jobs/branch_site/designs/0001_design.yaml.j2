@@ -39,8 +39,10 @@ devices:
     status__name: "Planned"
       {% if device_detail[device].rack is defined %}
     rack: "{{ device_detail[device].rack }}"
+        {% if device_detail[device].position is defined %}
     position: "{{ device_detail[device].position }}" 
     face: front
+        {% endif %}
       {% endif %}
     {% endfor %}
 {% endfor %}
