@@ -48,7 +48,7 @@ class BranchDesign(DesignJob):
         label="Switch stack size",
         description="Number of members in virtual chassis",
         min_value=2,
-        max_value=10,
+        max_value=4,
         default=2,
     )
 
