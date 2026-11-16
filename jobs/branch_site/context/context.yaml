@@ -69,16 +69,16 @@ device_detail:
 
 vlan_sets:
   normal:
-    - {vid: 100, name: management,   description: "Management",    prefix: 26}
-    - {vid: 110, name: users,        description: "User access",   prefix: 23}
-    - {vid: 120, name: voice,        description: "Voice",         prefix: 25}
-    - {vid: 130, name: wireless,     description: "Wireless",      prefix: 24}
+    - {vid: 100, name: management,   description: "Management",    prefixlen: 26}
+    - {vid: 110, name: users,        description: "User access",   prefixlen: 23}
+    - {vid: 120, name: voice,        description: "Voice",         prefixlen: 25}
+    - {vid: 130, name: wireless,     description: "Wireless",      prefixlen: 24}
   ebc:
-    - {vid: 100, name: management,   description: "Management",    prefix: 26}
-    - {vid: 110, name: users,        description: "User access",   prefix: 23}
-    - {vid: 120, name: voice,        description: "Voice",         prefix: 25}
-    - {vid: 130, name: wireless,     description: "Wireless",      prefix: 24}
-    - {vid: 140, name: av-multicast, description: "av-multicast",  prefix: 26}
+    - {vid: 100, name: management,   description: "Management",    prefixlen: 26}
+    - {vid: 110, name: users,        description: "User access",   prefixlen: 23}
+    - {vid: 120, name: voice,        description: "Voice",         prefixlen: 25}
+    - {vid: 130, name: wireless,     description: "Wireless",      prefixlen: 24}
+    - {vid: 140, name: av-multicast, description: "av-multicast",  prefixlen: 26}
 
 management:
   vlan: management
