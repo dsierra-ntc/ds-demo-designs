@@ -8,7 +8,7 @@ prefixes:
     "!ref": "parent_prefix"
 
 locations:
-  - "!create_or_update:id": "{{ office.id }}"
+  - "!get:id": "{{ office.id }}"
     "!ref": "office"
     vlans:
     {% for v in vlans %}
@@ -35,123 +35,23 @@ racks:
 
 {% set mgmt_vlan = vlans | selectattr('name', 'eq', management.vlan) | first %}
 {% set mgmt_base = mgmt_vlan.offset.split('/')[0].rsplit('.', 1)[0] %}
-{% set mgmt_mask = mgmt_vlan.offset.split('/')[1] %}
+{% set mgmt_mask = mgmt_vlan.prefix %}
 {% macro mgmt_ip(host) %}{{ office_prefix_cidr | network_offset(mgmt_base ~ '.' ~ host ~ '/' ~ mgmt_mask) }}{% endmacro %}
-{% macro dev_name(base) %}{{ base }}.{{ office_name | lower }}{% endmacro %}
+{% macro device_name(role, index, office) %}{{ device_detail[role].name_prefix }}-{{ '%02d' | format(index) }}.{{ office | lower }}{% endmacro %}
 
+{% set device_counts = get_device_counts() %}
 devices:
-# Static devices - firewalls
-{% for d in static_devices | selectattr('role', 'eq', 'Firewall') | list %}
-  - "!create_or_update:name": "{{ dev_name(d.name) }}"
+{% for device, count in device_counts.items() %}
+    {% for i in range(1, count + 1) %}
+  - "!create_or_update:name": "{{ device_name(device, i, office_name) }}"
     location: "!ref:office"
-    device_type__model: "{{ d.model }}"
-    role__name: "{{ d.role }}"
-    platform__name: "{{ d.platform }}"
+    device_type__model: "{{ device_detail[device].model }}"
+    role__name: "{{ device_detail[device].role }}"
+    platform__name: "{{ device_detail[device].platform }}"
     status__name: "Planned"
-    {% if d.rack is defined %}
-    rack: "!ref:{{ d.rack }}"
-    position: {{ get_device_position("firewall", loop.index0) }}
+    {% if device_detail[device].rack is defined %}
+    rack: "{{ device_detail[device].rack }}"
+    position: "{{ device_detail[device].position }}" 
     face: front
     {% endif %}
-    "!ref": "{{ d.name }}"
-    interfaces:
-      - "!create_or_update:name": "{{ d.mgmt_interface }}"
-        ip_address_assignments:
-          - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("firewall", loop.index0)) }}"
-              status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("firewall", loop.index0)) }}", deferred: true }
-{% endfor %}
-
-# Static devices - console servers
-{% for d in static_devices | selectattr('role', 'eq', 'Console Server') | list %}
-  - "!create_or_update:name": "{{ dev_name(d.name) }}"
-    location: "!ref:office"
-    device_type__model: "{{ d.model }}"
-    role__name: "{{ d.role }}"
-    platform__name: "{{ d.platform }}"
-    status__name: "Planned"
-    {% if d.rack is defined %}
-    rack: "!ref:{{ d.rack }}"
-    position: {{ get_device_position("console", loop.index0) }}
-    face: front
-    {% endif %}
-    "!ref": "{{ d.name }}"
-    interfaces:
-      - "!create_or_update:name": "{{ d.mgmt_interface }}"
-        ip_address_assignments:
-          - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("console", loop.index0)) }}"
-              status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("console", loop.index0)) }}", deferred: true }
-{% endfor %}
-
-# Dynamic switch stack
-{% for i in range(switch_stack_size) %}
-  - "!create_or_update:name": "{{ dev_name('switch' ~ (i + 1)) }}"
-    location: "!ref:office"
-    device_type__model: "{{ switch.model }}"
-    role__name: "{{ switch.role }}"
-    platform__name: "{{ switch.platform }}"
-    status__name: "Planned"
-    rack: "!ref:{{ switch.rack }}"
-    position: {{ get_device_position("switch", i) }}
-    face: front
-    "!ref": "switch{{ i + 1 }}"
-    {% if i == 0 %}
-    virtual_chassis:
-      "!create_or_update:name": "{{ office_name | lower }}-{{ switch.vc_name }}"
-      domain: "{{ office_name | upper }} VC"
-      master: "!ref:switch{{ i + 1 }}"
-      deferred: true
-    {% else %}
-    virtual_chassis:
-      "!get:name": "{{ office_name | lower }}-{{ switch.vc_name }}"
-    {% endif %}
-    vc_position: {{ i + 1 }}
-    vc_priority: {{ switch.vc_priorities[i] }}
-    interfaces:
-      - "!create_or_update:name": "{{ switch.mgmt_interface }}"
-        ip_address_assignments:
-          - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("switch", i)) }}"
-              status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("switch", i)) }}", deferred: true }
-{% endfor %}
-
-# Dynamic PDUs
-{% for i in range(pdu_count) %}
-  - "!create_or_update:name": "{{ dev_name('pdu' ~ (i + 1)) }}"
-    location: "!ref:office"
-    device_type__model: "{{ pdu.model }}"
-    role__name: "{{ pdu.role }}"
-    platform__name: "{{ pdu.platform }}"
-    status__name: "Planned"
-    rack: "!ref:{{ pdu.rack }}"
-    position: {{ get_device_position("pdu", i) }}
-    face: front
-    "!ref": "pdu{{ i + 1 }}"
-    interfaces:
-      - "!create_or_update:name": "{{ pdu.mgmt_interface }}"
-        ip_address_assignments:
-          - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(get_host_octet("pdu", i)) }}"
-              status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(get_host_octet("pdu", i)) }}", deferred: true }
-{% endfor %}
-
-# Access points
-{% for i in range(ap_count) %}
-  - "!create_or_update:name": "{{ dev_name('ap' ~ i) }}"
-    location: "!ref:office"
-    device_type__model: "{{ access_point.model }}"
-    role__name: "{{ access_point.role }}"
-    status__name: "Planned"
-    interfaces:
-      - "!create_or_update:name": "{{ access_point.mgmt_interface }}"
-        ip_address_assignments:
-          - ip_address:
-              "!create_or_update:address": "{{ mgmt_ip(access_point.first_host + i) }}"
-              status__name: "Active"
-    primary_ip4: { "!get:address": "{{ mgmt_ip(access_point.first_host + i) }}", deferred: true }
 {% endfor %}

@@ -1,65 +1,85 @@
 ---
-# Rack layout configuration - defines order and RU requirements for each device type
-# Rack positions are calculated top-down from position 48
-rack_layout:
-  - {type: firewall, count: 2, ru_each: 2}
-  - {type: console, count: 1, ru_each: 1}
-  - {type: switch, count: "switch_stack_size", ru_each: 1}
-  - {type: pdu, count: "pdu_count", ru_each: 1}
 
-# Static devices
-static_devices:
-  - {name: firewall01,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, host: 101, mgmt_interface: management}
-  - {name: firewall02,  model: PA-3220,     role: Firewall,       platform: PAN-OS,    rack: rack1, host: 102, mgmt_interface: management}
-  - {name: opengear01,  model: OM1208-8e,   role: Console Server, platform: Linux,     rack: rack1, host: 105, mgmt_interface: net1}
+device_counts:
+  console: 1
+  switch: 2       # default, overridden by input
+  firewall: 2
+  ups: 1
+  pdu: 2          # default, overridden by input
+  ap: 1           # default, overridden by input
 
-# Switch stack template - one per member in the stack
-switch:
-  model: C9300-48P-A
-  role: Access Switch
-  platform: Cisco IOS
-  rack: rack1
-  mgmt_interface: MGT
-  vc_name: stack
-  # Host octets for each potential stack member (up to 10)
-  hosts: [103, 104, 113, 114, 115, 116, 117, 118, 119, 120]
-  vc_priorities: [2, 1, 3, 4, 5, 6, 7, 8, 9, 10]
+device_detail:
+  console:
+    name_prefix: con
+    model: OM1208-8E-L
+    role: console-server
+    platform: Opengear
+    rack: rack1
+    position: 42
+    host: 11
+    mgmt_interface: net1
 
-# PDU template
-pdu:
-  model: AP9570
-  role: PDU
-  platform: Linux
-  rack: rack1
-  mgmt_interface: eth1
-  # Host octets for each potential PDU (up to 4)
-  hosts: [106, 107, 108, 109]
+  switch:
+    name_prefix: sw
+    model: C9300-48PUXM
+    role: office-switch
+    platform: Cisco IOS
+    rack: rack1
+    position: 40
+    mgmt_interface: GigabitEthernet0/0
+    vc_name: stack
+    hosts: [10, 9, 8, 7]
+    vc_priorities: [2, 1, 3, 4]
 
-access_point:
-  model: MR36
-  role: Wireless Access Point
-  switch: switch01
-  first_port: 2
-  mgmt_interface: eth1
-  first_host: 110   # ap0 gets .110, ap1 .111, ...
+  firewall:
+    name_prefix: fw
+    model: PA-3220
+    role: edge-firewall
+    platform: PAN-OS
+    rack: rack1
+    position: 36
+    mgmt_interface: management
+    hosts: [4, 5]
 
-cables:
-  - {a: {device: firewall01, port: ethernet1/1}, b: {device: switch01, port: Eth1/1}}
-  - {a: {device: opengear01, port: sw0p0}, b: {device: switch01, port: Eth1/2}}
-  - {a: {device: firewall02, port: ethernet1/1}, b: {device: switch02, port: Eth1/1}}
+  ups:
+    name_prefix: ups
+    model: SMT3000RMI2UC
+    role: ups
+    platform: APC AOS
+    rack: rack1
+    position: 2
+    host: 12
+    mgmt_interface: Ethernet
+
+  pdu:
+    name_prefix: pdu
+    model: AP8841
+    role: pdu
+    platform: APC AOS
+    rack: rack1
+    host: [13, 14]
+    mgmt_interface: Network
+
+  ap:
+    name_prefix: ap
+    model: CW9166I-MR
+    role: wireless-ap
+    platform: Cisco IOS
+    host: 20
 
 vlan_sets:
   normal:
-    - {vid: 10, name: management, description: "Management",  offset: "0.0.0.0/24"}
-    - {vid: 20, name: users,      description: "User access", offset: "0.0.1.0/24"}
-    - {vid: 30, name: voice,      description: "Voice",       offset: "0.0.2.0/24"}
+    - {vid: 100, name: management,   description: "Management",    prefix: 26}
+    - {vid: 110, name: users,        description: "User access",   prefix: 23}
+    - {vid: 120, name: voice,        description: "Voice",         prefix: 25}
+    - {vid: 130, name: wireless,     description: "Wireless",      prefix: 24}
   ebc:
-    - {vid: 10, name: management, description: "Management",  offset: "0.0.0.0/24"}
-    - {vid: 20, name: users,      description: "User access", offset: "0.0.1.0/25"}
-    - {vid: 21, name: users_ext,  description: "Extended user access", offset: "0.0.1.128/25"}
-    - {vid: 30, name: voice,      description: "Voice",       offset: "0.0.2.0/24"}
+    - {vid: 100, name: management,   description: "Management",    prefix: 26}
+    - {vid: 110, name: users,        description: "User access",   prefix: 23}
+    - {vid: 120, name: voice,        description: "Voice",         prefix: 25}
+    - {vid: 130, name: wireless,     description: "Wireless",      prefix: 24}
+    - {vid: 140, name: av-multicast, description: "av-multicast",  prefix: 26}
 
-# Devices get a primary IP from the named VLAN's prefix, using their `host` value as the last octet.
-# Assumes the VLAN offset ends in .0 (e.g. 0.0.0.0/24).
 management:
   vlan: management
+
