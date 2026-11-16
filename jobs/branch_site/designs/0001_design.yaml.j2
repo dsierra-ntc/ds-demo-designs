@@ -37,5 +37,12 @@ devices:
     role__name: "{{ device_detail[device].role }}"
     platform__name: "{{ device_detail[device].platform }}"
     status__name: "Planned"
+      {% if device_detail[device].rack is defined %}
+    rack: "{{ device_detail[device].rack }}"
+        {% if device_detail[device].position is defined %}
+    position: "{{ device_detail[device].position }}" 
+    face: front
+        {% endif %}
+      {% endif %}
     {% endfor %}
 {% endfor %}
